@@ -216,8 +216,7 @@ vector<T, Alloc>::operator=(const vector& other)
 {
     if(&other != this)
     {
-        vector tmp(other);
-        std::swap(tmp, *this);
+        std::swap(vector(other), *this);
     }
     return *this;
 }

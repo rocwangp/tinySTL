@@ -12,7 +12,7 @@
 /* #include "Test\GraphTest.h" */
 #include "Test/ListTest.h"
 /* #include "Test\PairTest.h" */
-/* #include "Test\PriorityQueueTest.h" */
+#include "Test/PriorityQueueTest.h"
 #include "Test/QueueTest.h"
 /* #include "Test\RefTest.h" */
 /* #include "Test\SharedPtrTest.h" */
@@ -40,7 +40,7 @@ int main(){
 	tinystl::ListTest::testAllCases();
 	/* tinystl::GraphTest::testAllCases(); */
 	/* tinystl::PairTest::testAllCases(); */
-	/* tinystl::PriorityQueueTest::testAllCases(); */
+	tinystl::PriorityQueueTest::testAllCases();
 	tinystl::QueueTest::testAllCases();
 	/* tinystl::RefTest::testAllCases(); */
 	/* tinystl::SharedPtrTest::testAllCases(); */
