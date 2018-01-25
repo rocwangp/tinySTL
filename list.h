@@ -98,6 +98,8 @@ public:
     typedef std::ptrdiff_t          difference_type;
     typedef std::size_t             size_type;
     typedef ListIterator<T>         iterator;
+    typedef tinystl::reverse_iterator<iterator> reverse_iterator;
+    typedef const reverse_iterator  const_reverse_iterator;
     typedef const ListIterator<T>   const_iterator;
     typedef ListNode<T>*            node_pointer;
 private:
@@ -138,6 +140,16 @@ public:
     const_iterator begin() const noexcept { return iterator(header_.node_->next); }
     iterator end() noexcept { return tail_; }
     const_iterator end() const noexcept { return tail_; }
+    reverse_iterator rbegin()  noexcept { return reverse_iterator(tail_); }
+    reverse_iterator rend()  noexcept { return reverse_iterator(header_.node_->next); }
+    const_reverse_iterator rbegin() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(tail_)); }
+    const_reverse_iterator rend() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(header_.node_->next)); }
+    const_reverse_iterator crbegin() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(tail_)); }
+    const_reverse_iterator crend() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(header_.node_->next)); }
 
 
     /* Capacity */

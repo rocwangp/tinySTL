@@ -76,12 +76,12 @@ namespace tinystl{
 				l1.push_back(i);
 				l2.push_back(i);
 			}
-			/* auto rit1 = l1.rbegin(); */
-			/* auto rit2 = l2.rbegin(); */
-			/* for (; rit1 != l1.rend() && rit2 != l2.rend(); ++rit1, ++rit2){ */
-			/* 	assert(*rit1 == *rit2); */
-			/* } */
-			/* assert(rit1 == l1.rend() && rit2 == l2.rend()); */
+			auto rit1 = l1.rbegin();
+			auto rit2 = l2.rbegin();
+			for (; rit1 != l1.rend() && rit2 != l2.rend(); ++rit1, ++rit2){
+				assert(*rit1 == *rit2);
+			}
+			assert(rit1 == l1.rend() && rit2 == l2.rend());
 		}
 		void testCase6(){
 			stdL<int> l1;

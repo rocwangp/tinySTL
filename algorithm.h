@@ -1,9 +1,9 @@
 #pragma once
-#include <algorithm>
 #include <iostream>
+
+#include "iterator.h"
 namespace tinystl
 {
-
 /* template <class RandomIterator> */
 /* void print(RandomIterator first, RandomIterator last) */
 /* { */
@@ -11,6 +11,7 @@ namespace tinystl
 /*         std::cout << *it << " "; */
 /*     std::cout << std::endl; */
 /* } */
+
 template <class RandomIterator, class Compare>
 void make_heap(RandomIterator first,
                RandomIterator last,
@@ -73,4 +74,10 @@ void pop_heap(RandomIterator first, RandomIterator last, Compare comp)
     }
     *currentIt = value;
 }
+
+
+
+
+
+
 }

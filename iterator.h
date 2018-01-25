@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-
+#include "algorithm.h"
 namespace tinystl {
 
 struct input_iterator_tag {};
@@ -112,6 +112,170 @@ struct random_access_iterator{
 
 
 
+template <class Iterator>
+class reverse_iterator 
+{
+public:
+    typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+    typedef typename iterator_traits<Iterator>::value_type        value_type;
+    typedef typename iterator_traits<Iterator>::difference_type   difference_type;
+    typedef typename iterator_traits<Iterator>::pointer           pointer;
+    typedef typename iterator_traits<Iterator>::reference         reference;
+    typedef Iterator                                              iterator_type;
+    typedef reverse_iterator<Iterator>                            Self;
+
+protected:
+    iterator_type current_;
+
+public:
+    reverse_iterator() {}
+    explicit reverse_iterator(iterator_type x)
+        : current_(x)
+    {  }
+
+    template <class U>
+    reverse_iterator(const reverse_iterator<U>& other)
+        : current_(other.base())
+    {  }
+
+    template <class U>
+    reverse_iterator& operator=(const reverse_iterator<U>& other)
+    { current_ = other.base(); }
+
+    iterator_type base() const
+    {
+        iterator_type tmp(current_);
+        return ++tmp;
+    }
+
+    reference operator*() const
+    {
+        iterator_type tmp(current_);
+        return *(--tmp);
+    }
+    pointer operator->() const
+    {
+        iterator_type tmp(current_);
+        return &(*(--tmp));
+    }
+
+    reference operator[](difference_type n) const
+    {
+        return *(current_ - (n + 1));
+    }
+
+    Self& operator++()
+    {
+        --current_;
+        return *this;
+    }
+    
+    Self& operator++(int)
+    {
+        Self tmp(*this);
+        --current_;
+        return tmp;
+    }
+
+    Self& operator--()
+    {
+        ++current_;
+        return *this;
+    }
+
+    Self& operator--(int)
+    {
+        Self tmp(*this);
+        ++current_;
+        return tmp;
+    }
+
+    Self& operator+=(difference_type n)
+    {
+        std::advance(current_, -n);
+        return *this;
+    }
+
+    Self& operator-=(difference_type n)
+    {
+        return operator+=(-n);
+    }
+
+    Self operator+(difference_type n) const
+    {
+        Self tmp(*this);
+        return tmp += n;
+    }
+
+    Self operator-(difference_type n) const
+    {
+        Self tmp(*this);
+        return tmp -= n;
+    }
+};
+
+template <class Iterator1, class Iterator2>
+bool operator==(const reverse_iterator<Iterator1>& lhs,
+                const reverse_iterator<Iterator2>& rhs)
+{
+    return lhs.base() == rhs.base();
+}
+
+template <class Iterator1, class Iterator2>
+bool operator!=(const reverse_iterator<Iterator1>& lhs,
+                const reverse_iterator<Iterator2>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <class Iterator1, class Iterator2>
+bool operator<(const reverse_iterator<Iterator1>& lhs,
+                const reverse_iterator<Iterator2>& rhs)
+{
+    return lhs.base() > rhs.base();
+}
+
+template <class Iterator1, class Iterator2>
+bool operator>(const reverse_iterator<Iterator1>& lhs,
+                const reverse_iterator<Iterator2>& rhs)
+{
+    return lhs.base() < rhs.base();
+}
+
+template <class Iterator1, class Iterator2>
+bool operator<=(const reverse_iterator<Iterator1>& lhs,
+                const reverse_iterator<Iterator2>& rhs)
+{
+    return !(lhs > rhs);
+}
+
+template <class Iterator1, class Iterator2>
+bool operator>=(const reverse_iterator<Iterator1>& lhs,
+                const reverse_iterator<Iterator2>& rhs)
+{
+    return !(lhs < rhs);
+}
+
+
+template <class Iterator>
+reverse_iterator<Iterator>
+operator+(typename reverse_iterator<Iterator>::difference_type n,
+          const reverse_iterator<Iterator>& it)
+{
+    reverse_iterator<Iterator> tmp(it);
+    return tmp += n;
+}
+
+template <class Iterator1, class Iterator2>
+auto operator-(const reverse_iterator<Iterator1>& lhs,
+               const reverse_iterator<Iterator2>& rhs)
+    -> decltype(rhs.base() - lhs.base())
+{
+    return rhs.base() - lhs.base();
+}
+
+
+
 /* 用于返回iterator_category对象，即上述五个*_iterator_tag对象 */
 template<class InputIterator>
 inline typename iterator_traits<InputIterator>::iterator_category
@@ -127,6 +291,7 @@ distance_type(Iterator) {
     return static_cast<typename iterator_traits<Iterator>::difference_type>(0);
 }
 
+
 /* *************************************************************** *
  *                           advance函数                           *
  *                   根据模板参数推导进行函数重载                  *
@@ -135,88 +300,102 @@ distance_type(Iterator) {
 /* 针对input_iterator，bidirectional_iterator和random_iterator重载的三个__advance函数
  * 根据重载判定，没有与output_iterator_tag和forward_iterator_tag完全匹配的__advance函数，
  * 所以默认调用模板参数InputIterator类型的__advance函数，功能上完全满足要求 */ 
-template <class InputIterator, class Distance>
-inline void __advance(InputIterator& it, Distance n, input_iterator_tag){
-    while(n--)
-        ++it;
+namespace {
+
+    template <class InputIterator, class Distance>
+    inline void __advance(InputIterator& it, Distance n, tinystl::input_iterator_tag){
+        while(n--)
+            ++it;
+    }
+
+    template <class BidirectionalIterator, class Distance>
+    inline void __advance(BidirectionalIterator& it, Distance n, tinystl::bidirectional_iterator_tag) {
+        if(n > 0) 
+            while(n--)  ++it;
+        else
+            while(n++)  ++it;
+    }
+
+    template <class RandomAccessIterator, class Distance>
+    inline void __advance(RandomAccessIterator& it, Distance n, tinystl::random_access_iterator_tag) {
+        it += n;
+    }
+
 }
-
-template <class BidirectionalIterator, class Distance>
-inline void __advance(BidirectionalIterator& it, Distance n, bidirectional_iterator_tag) {
-    if(n > 0) 
-        while(n--)  ++it;
-    else
-        while(n++)  ++it;
-}
-
-template <class RandomAccessIterator, class Distance>
-inline void __advance(RandomAccessIterator& it, Distance n, random_access_iterator_tag) {
-    it += n;
-}
-
-
 /* advance函数接口，根据迭代器类型选择合适的__advance函数 */
 template <class InputIterator, class Distance>
-inline void advance(InputIterator it, Distance& n) {
+void advance(InputIterator& it, Distance n) {
     /* __advance是函数重载，会根据第三个参数进行模板参数推导，从而选择合适的函数 */
     __advance(it, n, iterator_category(it));
 }
+
 
 
 /* ********************************************************* *
  *                      distance函数                         *
  *               根据模板参数推导进行函数重载                *
  * ********************************************************* */
-template <class InputIterator, class Distance>
-inline void __distance(InputIterator front, 
-                       InputIterator back, 
-                       Distance& n, 
-                       input_iterator_tag) {
-    while(front != back) {
-        ++front;
-        ++n;
+namespace {
+
+    template <class InputIterator, class Distance>
+    inline void __distance(InputIterator front, 
+                           InputIterator back, 
+                           Distance& n, 
+                           tinystl::input_iterator_tag) {
+        while(front != back) {
+            ++front;
+            ++n;
+        }
     }
-}
 
-template <class RandomAccessIterator, class Distance>
-inline void __distance(RandomAccessIterator front, 
-                       RandomAccessIterator back, 
-                       Distance& n, 
-                       random_access_iterator_tag) {
-    n += back - front;
-}
-
-
-
-template <class InputIterator>
-inline typename iterator_traits<InputIterator>::difference_type
-__distance(InputIterator front, InputIterator back, input_iterator_tag) {
-    typename iterator_traits<InputIterator>::difference_type n = distance_type(front);
-    while(front != back) {
-        ++front;
-        ++n;
+    template <class RandomAccessIterator, class Distance>
+    inline void __distance(RandomAccessIterator front, 
+                           RandomAccessIterator back, 
+                           Distance& n, 
+                           tinystl::random_access_iterator_tag) {
+        n += back - front;
     }
-    return n;
+
+
+
+    template <class InputIterator>
+    inline typename iterator_traits<InputIterator>::difference_type
+    __distance(InputIterator front, InputIterator back, tinystl::input_iterator_tag) {
+        typename iterator_traits<InputIterator>::difference_type n = distance_type(front);
+        while(front != back) {
+            ++front;
+            ++n;
+        }
+        return n;
+    }
+
+    template <class RandomAccessIterator>
+    inline typename iterator_traits<RandomAccessIterator>::difference_type
+    __distance(RandomAccessIterator front, RandomAccessIterator back, tinystl::random_access_iterator_tag) {
+        return back - front;
+    }
+
+
+    /* 将结果保存在引用参数n中 */
+    template <class InputIterator, class Distance>
+    void distance(InputIterator front, InputIterator back, Distance& n) {
+        __distance(front, back, n, iterator_category(front));
+    }
+
 }
-
-template <class RandomAccessIterator>
-inline typename iterator_traits<RandomAccessIterator>::difference_type
-__distance(RandomAccessIterator front, RandomAccessIterator back, random_access_iterator_tag) {
-    return back - front;
-}
-
-
-/* 将结果保存在引用参数n中 */
-template <class InputIterator, class Distance>
-inline void distance(InputIterator front, InputIterator back, Distance& n) {
-    __distance(front, back, n, iterator_category(front));
-}
-
 /* 将结果返回 */
 template <class InputIterator, class Distance>
 inline typename iterator_traits<InputIterator>::difference_type
 distance(InputIterator front, InputIterator back) {
     return __distance(front, back, iterator_category(front));
 }
+
+
+
+
+
+
+
+
 
 }

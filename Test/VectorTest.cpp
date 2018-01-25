@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+
+#include "../iterator.h"
 #include "VectorTest.h"
 
 namespace tinystl{
@@ -70,12 +72,45 @@ namespace tinystl{
 				assert(*it == i);
 			}
 
+			i = 1;
+			for (tsVec<int>::const_iterator it = myvector.cbegin(); it != myvector.cend(); ++it, ++i){
+				assert(*it == i);
+			}
+            
 		}
 		void testCase5(){
 			tsVec<int> myvector(5);  // 5 default-constructed ints
 			int i = 0;
+			tsVec<int>::reverse_iterator rit = myvector.rbegin();
+			for (; rit != myvector.rend(); ++rit)
+				*rit = ++i;
 
-		
+            tinystl::Test::print(myvector);
+			i = 5;
+			for (tsVec<int>::iterator it = myvector.begin(); it != myvector.end(); ++it, --i){
+				assert(*it == i);
+			}
+
+            i = 1;
+            auto r = myvector.rbegin();
+            for(int n = 0; n < 5; ++n, ++i)
+                assert(r[n] == i);
+            
+            i = 1;
+            for(int n = 0; n < 5; ++n, ++i)
+                assert(*(myvector.rbegin()+n) == i);
+
+            i = 5;
+            for(int n = 1; n <= 5; ++n, --i)
+                assert(*(myvector.rend()-n) == i);
+
+			i = 1;
+			for (tsVec<int>::reverse_iterator it = myvector.rbegin(); it != myvector.rend(); ++it, ++i){
+				assert(*it == i);
+			}
+
+            auto distance = myvector.rend() - myvector.rbegin();
+            assert(distance == myvector.size());
 
 		}
 		void testCase6(){

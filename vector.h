@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include "alloc.h"
+#include "iterator.h"
 
 namespace tinystl{
 
@@ -14,15 +15,17 @@ template <class T, class Alloc = alloc>
 class vector {
 public:
     /* 内嵌类型定义 */
-    typedef T                   value_type;
-    typedef T*                  pointer;
-    typedef const T*            const_pointer;
-    typedef T&                  reference;
-    typedef const T&            const_reference;
-    typedef T*                  iterator;
-    typedef const T*            const_iterator;
-    typedef std::ptrdiff_t      difference_type;
-    typedef std::size_t         size_type;
+    typedef T                               value_type;
+    typedef T*                              pointer;
+    typedef const T*                        const_pointer;
+    typedef T&                              reference;
+    typedef const T&                        const_reference;
+    typedef T*                              iterator;
+    typedef tinystl::reverse_iterator<iterator>      reverse_iterator;
+    typedef const reverse_iterator          const_reverse_iterator;
+    typedef const T*                        const_iterator;
+    typedef std::ptrdiff_t                  difference_type;
+    typedef std::size_t                     size_type;
 
 private:
     /* 空间配置器的又一层封装，可以将申请的地址类型从void*转为value_type* */
@@ -80,6 +83,16 @@ public:
     const_iterator end() const noexcept{ return static_cast<const_iterator>(finish_); }
     const_iterator cbegin() const noexcept { return static_cast<const_iterator>(start_); }
     const_iterator cend() const noexcept { return static_cast<const_iterator>(finish_); }
+    reverse_iterator rbegin()  noexcept { return reverse_iterator(finish_); }
+    reverse_iterator rend()  noexcept { return reverse_iterator(start_); }
+    const_reverse_iterator rbegin() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(finish_)); }
+    const_reverse_iterator rend() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(start_)); }
+    const_reverse_iterator crbegin() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(finish_)); }
+    const_reverse_iterator crend() const noexcept 
+    { return static_cast<const_reverse_iterator>(reverse_iterator(finish_)); }
 
     /* Capacity */
     bool empty() const noexcept { return begin() == end(); }

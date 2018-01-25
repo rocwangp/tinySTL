@@ -153,6 +153,8 @@ public:
     typedef std::ptrdiff_t              difference_type;
     typedef DequeIterator<T, BufSize>   iterator;
     typedef const iterator              const_iterator;
+    typedef tinystl::reverse_iterator<iterator> reverse_iterator;
+    typedef const reverse_iterator      const_reverse_iterator;
 
     typedef T**                         map_pointer;
     typedef SimpleAlloc<value_type, Alloc> dataAllocator;
@@ -204,10 +206,16 @@ public:
     iterator begin() noexcept { return start_; }
     const_iterator begin() const noexcept { return start_; }
     const_iterator cbegin() const noexcept { return start_; }
+    reverse_iterator rbegin() noexcept { return reverse_iterator(finish_); }
+    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(finish_); }
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(finish_); }
 
     iterator end() noexcept { return finish_; }
     const_iterator end() const noexcept { return finish_; }
     const_iterator cend() const noexcept { return finish_; }
+    reverse_iterator rend() noexcept { return reverse_iterator(start_); }
+    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(start_); }
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(start_); }
 
     bool empty() const noexcept { return begin() == end(); }
     size_type size() const noexcept { return finish_ - start_; }
