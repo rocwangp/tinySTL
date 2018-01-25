@@ -236,9 +236,9 @@ void list<T, Alloc>::ctorAux(InputIterator first, InputIterator last, std::false
 
 template <class T, class Alloc>
 list<T, Alloc>::list()
-    : header_(create_node(value_type())),
-      tail_(create_node(value_type()))
 {
+    header_.node_ = create_node(value_type());
+    tail_.node_ = create_node(value_type());
     header_.node_->next = tail_.node_;
     tail_.node_->prev = header_.node_;
 }
@@ -270,11 +270,16 @@ list<T, Alloc>::list(const list& other)
 /* 移动构造函数，使用other的所有内存 */
 template <class T, class Alloc>
 list<T, Alloc>::list(list&& other)
-    : header_(other.header_),
-      tail_(other.tail_)
+    : list()
 {
+    if(!other.empty())
+    {
+        header_.node_->next = std::move(other.header_.node_->next);
+        tail_.node_->prev = std::move(other.tail_.node_->prev);
+    }
     /* 改变other的成员防止other析构时释放数据 */
-    other.header_.node_ = other.tail_.node_ = nullptr;
+    other.header_.node_->next = other.tail_.node_;
+    other.tail_.node_->prev = other.header_.node_;
 }
 
 

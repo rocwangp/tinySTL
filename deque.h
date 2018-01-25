@@ -519,7 +519,7 @@ void deque<T, Alloc, BufSize>::reverse_map_at_front(size_type addCount)
 template <class T, class Alloc, size_t BufSize>
 void deque<T, Alloc, BufSize>::reverse_map_at_back(size_type addCount)
 {
-    if(finish_.map_ == map_ + mapSize_ - 1 && finish_.cur_ + addCount > finish_.last_)
+    if(finish_.map_ == map_ + mapSize_ - 1 && finish_.cur_ + addCount >= finish_.last_)
     {
         reallocate_map(addCount);
     }
@@ -550,10 +550,10 @@ void deque<T, Alloc, BufSize>::push_back(const value_type& value)
     if(finish_.cur_ == finish_.last_  - 1)
     {
         reverse_map_at_back(1);
-        /* std::cout << finish_.map_ + 1 <<std::endl; */
         *(finish_.map_ + 1) = dataAllocator::allocate(bufferSize());
     }
-    *(finish_++) = value;
+    construct(finish_.cur_, value);
+    ++finish_;
 }
 
 template <class T, class Alloc, size_t BufSize>
@@ -564,7 +564,9 @@ void deque<T, Alloc, BufSize>::push_front(const value_type& value)
         reverse_map_at_front(1);
         *(start_.map_ - 1) = dataAllocator::allocate(bufferSize());
     }
-    *(--start_) = value;
+    
+    --start_;
+    construct(start_.cur_, value);
 }
 
 template <class T, class Alloc, size_t BufSize>

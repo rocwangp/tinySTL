@@ -108,21 +108,22 @@ namespace tinystl{
         }
         void testCase8()
         {
-            stdDQ<double> dq1;
-            tsDQ<double> dq2;
-            for(double i = 0; i < 50; ++i)
+            stdDQ<std::string> dq1;
+            tsDQ<std::string> dq2;
+            for(double i = 0; i < 100; ++i)
             {
-                dq1.push_back(i);
-                dq1.push_front(i - 50);
-                dq2.push_back(i);
-                dq2.push_front(i - 50);
+                dq1.push_back(std::to_string(i));
+                dq1.push_front(std::to_string(i - 50));
+                dq2.push_back(std::to_string(i));
+                dq2.push_front(std::to_string(i - 50));
             }
+         
 			assert(tinystl::Test::container_equal(dq1, dq2));
             assert(dq1[10] == dq2[10]);
             assert(dq1.at(20) == dq2.at(20));
 
-            dq1[30] = 3.14;
-            dq2[30] = 3.14;
+            dq1[30] = std::to_string(3.14);
+            dq2[30] = std::to_string(3.14);
             assert(dq1[30] == dq2[30]);
         }
 

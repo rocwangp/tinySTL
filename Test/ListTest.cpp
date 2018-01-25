@@ -6,8 +6,8 @@ namespace tinystl{
 	namespace ListTest{
        
 		void testCase1(){
-			stdL<int> l1(10, 0);
-			tsL<int> l2(10, 0);
+			stdL<int> l1(100, 0);
+			tsL<int> l2(100, 0);
 			assert(tinystl::Test::container_equal(l1, l2));
 
 			int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -47,22 +47,22 @@ namespace tinystl{
 		void testCase4(){
 			stdL<int> l1;
 			tsL<int> l2;
-			for (auto i = 0; i != 10; ++i){
+			for (auto i = 0; i != 100; ++i){
 				l1.push_front(i);
 				l2.push_front(i);
 			}
 			assert(tinystl::Test::container_equal(l1, l2));
-			for (auto i = 0; i != 10; ++i){
+			for (auto i = 0; i != 100; ++i){
 				l1.push_back(i);
 				l2.push_back(i);
 			}
 			assert(tinystl::Test::container_equal(l1, l2));
-			for (auto i = 0; i != 5; ++i){
+			for (auto i = 0; i != 50; ++i){
 				l1.pop_back();
 				l2.pop_back();
 			}
 			assert(tinystl::Test::container_equal(l1, l2));
-			for (auto i = 0; i != 5; ++i){
+			for (auto i = 0; i != 50; ++i){
 				l1.pop_front();
 				l2.pop_front();
 			}
@@ -87,8 +87,8 @@ namespace tinystl{
 			stdL<int> l1;
 			tsL<int> l2;
 
-			l1.insert(l1.end(), 10, -1);
-			l2.insert(l2.end(), 10, -1);
+			l1.insert(l1.end(), 100, -1);
+			l2.insert(l2.end(), 100, -1);
 			assert(tinystl::Test::container_equal(l1, l2));
 
 			auto it1 = l1.begin();

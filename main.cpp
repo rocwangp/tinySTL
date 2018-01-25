@@ -13,10 +13,10 @@
 #include "Test/ListTest.h"
 /* #include "Test\PairTest.h" */
 /* #include "Test\PriorityQueueTest.h" */
-/* #include "Test\QueueTest.h" */
+#include "Test/QueueTest.h"
 /* #include "Test\RefTest.h" */
 /* #include "Test\SharedPtrTest.h" */
-/* #include "Test\StackTest.h" */
+#include "Test/StackTest.h"
 /* #include "Test\StringTest.h" */
 /* #include "Test\SuffixArrayTest.h" */
 /* #include "Test\TrieTreeTest.h" */
@@ -35,15 +35,15 @@ int main(){
 	/* tinystl::BinarySearchTreeTest::testAllCases(); */
 	/* tinystl::CircularBufferTest::testAllCases(); */
 	/* tinystl::COWPtrTest::testAllCases(); */
+	tinystl::StackTest::testAllCases();
 	tinystl::DequeTest::testAllCases();
 	tinystl::ListTest::testAllCases();
 	/* tinystl::GraphTest::testAllCases(); */
 	/* tinystl::PairTest::testAllCases(); */
 	/* tinystl::PriorityQueueTest::testAllCases(); */
-	/* tinystl::QueueTest::testAllCases(); */
+	tinystl::QueueTest::testAllCases();
 	/* tinystl::RefTest::testAllCases(); */
 	/* tinystl::SharedPtrTest::testAllCases(); */
-	/* tinystl::StackTest::testAllCases(); */
 	/* tinystl::StringTest::testAllCases(); */
 	/* tinystl::SuffixArrayTest::testAllCases(); */
 	/* tinystl::TrieTreeTest::testAllCases(); */
