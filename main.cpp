@@ -17,7 +17,7 @@
 /* #include "Test\RefTest.h" */
 /* #include "Test\SharedPtrTest.h" */
 #include "Test/StackTest.h"
-/* #include "Test\StringTest.h" */
+#include "Test/StringTest.h"
 /* #include "Test\SuffixArrayTest.h" */
 /* #include "Test\TrieTreeTest.h" */
 /* #include "Test\TypeTraitsTest.h" */
@@ -44,7 +44,7 @@ int main(){
 	tinystl::QueueTest::testAllCases();
 	/* tinystl::RefTest::testAllCases(); */
 	/* tinystl::SharedPtrTest::testAllCases(); */
-	/* tinystl::StringTest::testAllCases(); */
+	tinystl::StringTest::testAllCases();
 	/* tinystl::SuffixArrayTest::testAllCases(); */
 	/* tinystl::TrieTreeTest::testAllCases(); */
 	/* tinystl::TypeTraitsTest::testAllCases(); */
