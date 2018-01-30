@@ -32,6 +32,7 @@ namespace tinystl{
 		void testCase14();
         void testCase15();
         void testCase16();
+        void testCase17();
 
 		void testAllCases();
 	}

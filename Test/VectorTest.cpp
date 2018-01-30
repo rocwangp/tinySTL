@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
+#include <iterator>
 
 #include "../iterator.h"
+#include "../string.h"
+
 #include "VectorTest.h"
 
 namespace tinystl{
@@ -85,7 +88,6 @@ namespace tinystl{
 			for (; rit != myvector.rend(); ++rit)
 				*rit = ++i;
 
-            tinystl::Test::print(myvector);
 			i = 5;
 			for (tsVec<int>::iterator it = myvector.begin(); it != myvector.end(); ++it, --i){
 				assert(*it == i);
@@ -289,6 +291,17 @@ namespace tinystl{
             v2.clear();
 			assert(tinystl::Test::container_equal(v1, v2));
         }
+        void testCase17()
+        {
+            tsVec<tinystl::string> v2(10, "abc");
+            for(int i = 0; i < 50; ++i)
+            {
+                v2.push_back("def");
+            }
+            for(int i = 0; i < 5; ++i)
+                v2.pop_back();
+            /* std::copy(v2.begin(), v2.end(), std::ostream_iterator<tinystl::string>(std::cout, " ")); */
+        }
 
 		void testAllCases(){
 			testCase1();
@@ -307,6 +320,7 @@ namespace tinystl{
 			testCase14();
 			testCase15();
             testCase16();
+            testCase17();
 		}
 	}
 }

@@ -25,6 +25,8 @@
 /* #include "Test\UniquePtrTest.h" */
 /* #include "Test\Unordered_setTest.h" */
 #include "Test/VectorTest.h"
+#include "Test/RBTreeTest.h"
+#include "Test/SkipListTest.h"
 
 /* using namespace tinystl::Profiler; */
 
@@ -35,6 +37,7 @@ int main(){
 	/* tinystl::BinarySearchTreeTest::testAllCases(); */
 	/* tinystl::CircularBufferTest::testAllCases(); */
 	/* tinystl::COWPtrTest::testAllCases(); */
+    tinystl::SkipListTest::testCaseAll();
 	tinystl::StackTest::testAllCases();
 	tinystl::DequeTest::testAllCases();
 	tinystl::ListTest::testAllCases();
@@ -52,6 +55,7 @@ int main(){
 	/* tinystl::UniquePtrTest::testAllCases(); */
 	/* tinystl::Unordered_setTest::testAllCases(); */
 	tinystl::VectorTest::testAllCases();
+    /* tinystl::RBTreeTest::testAllCase(); */
 	 
 	return 0;
 }

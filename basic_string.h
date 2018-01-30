@@ -293,7 +293,6 @@ basic_string<T, Traits, Alloc>::basic_string(const basic_string& other, size_typ
     finish_ = end_ = start_ + count;
     std::uninitialized_copy(other.begin() + pos, other.begin() + pos + count, start_);
     construct(finish_, value_type());
-    std::cout << size() << std::endl;
 }
 
 template <class T, class Traits, class Alloc>
@@ -532,7 +531,6 @@ basic_string<T, Traits, Alloc>::insert(const_iterator pos, InputIterator first, 
         else
         {
             tinystl::destroy(end());
-            std::cout << end() << " " << count << std::endl;
             std::uninitialized_fill(end(), pos + count, value_type());
             std::uninitialized_copy(pos, end(), pos + count);
             std::copy(first, last, pos);
@@ -1180,6 +1178,42 @@ bool operator>=(const T* lhs,
     return !(lhs < rhs);
 }
 
+template <class T, class Traits, class Alloc>
+std::basic_istream<T>& operator>>(std::basic_istream<T>& is, basic_string<T, Traits, Alloc>& str)
+{
+    str.clear();
+    T ch;
+    while((ch = is.get()))
+    {
+        if(std::isblank(ch) || Traits::eq(ch, '\n')) 
+            continue;
+        break;
+    }
+    str.push_back(ch);
+    while((ch = is.get()))
+    {
+        if(std::isblank(ch) || ch == EOF || Traits::eq(ch, '\n'))
+            break;
+        str.push_back(ch);
+    }
+    return is;
+}
+
+template <class T, class Traits, class Alloc>
+std::basic_ostream<T>& operator<<(std::basic_ostream<T>& os, basic_string<T, Traits, Alloc>& str)
+{
+    for(auto& ch : str)
+        os << ch;
+    return os;
+}
+
+template <class T, class Traits, class Alloc>
+std::basic_ostream<T>& operator<<(std::basic_ostream<T> os, const basic_string<T, Traits, Alloc>& str)
+{
+    for(auto& ch : str)
+        os << ch;
+    return os;
+}
 template <class T, class Traits, class Alloc>
 void swap(basic_string<T, Traits, Alloc>& lhs,
           basic_string<T, Traits, Alloc>& rhs)

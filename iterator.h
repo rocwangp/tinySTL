@@ -375,16 +375,15 @@ namespace {
         return back - front;
     }
 
-
-    /* 将结果保存在引用参数n中 */
-    template <class InputIterator, class Distance>
-    void distance(InputIterator front, InputIterator back, Distance& n) {
-        __distance(front, back, n, iterator_category(front));
-    }
-
 }
-/* 将结果返回 */
+/* 将结果保存在引用参数n中 */
 template <class InputIterator, class Distance>
+void distance(InputIterator front, InputIterator back, Distance& n) {
+    __distance(front, back, n, iterator_category(front));
+}
+
+/* 将结果返回 */
+template <class InputIterator>
 inline typename iterator_traits<InputIterator>::difference_type
 distance(InputIterator front, InputIterator back) {
     return __distance(front, back, iterator_category(front));

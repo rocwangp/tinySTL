@@ -40,9 +40,6 @@ namespace tinystl{
 
 			stdStr s5(temp1, 1);
 			tsStr s6(temp2, 1);
-            tinystl::Test::print(s5);
-            tinystl::Test::print(s6);
-            std::cout << s5.size() << " " << s6.size() << std::endl;
 			assert(tinystl::Test::container_equal(s5, s6));
 
 			stdStr s7(temp1, 0, 5);
@@ -262,9 +259,6 @@ namespace tinystl{
 
 			s1.replace(0, 3, t1);
 			s2.replace(0, 3, t2);
-            tinystl::Test::print(s1);
-            tinystl::Test::print(s2);
-            std::cout << s1.size() << " " << s2.size() << std::endl;
 			assert(tinystl::Test::container_equal(s1, s2));
 
 			s1.replace(s1.begin(), s1.begin() + s1.size() / 2, t1);
@@ -444,11 +438,11 @@ namespace tinystl{
 			tsStr name;
 			std::ifstream in(".\\TestData\\string_test.txt");
 
-			/* if (in){ */
-			/* 	in >> name; */
-			/* 	assert(name == "zouxiaohang"); */
-			/* 	in.close(); */
-			/* } */
+			if (in){
+				in >> name;
+				assert(name == "zouxiaohang");
+				in.close();
+			}
 		}
 
 		void testAllCases(){
