@@ -27,6 +27,8 @@
 #include "Test/VectorTest.h"
 #include "Test/RBTreeTest.h"
 #include "Test/SkipListTest.h"
+#include "Test/SetTest.h"
+#include "Test/MapTest.h"
 
 /* using namespace tinystl::Profiler; */
 
@@ -55,6 +57,8 @@ int main(){
 	/* tinystl::UniquePtrTest::testAllCases(); */
 	/* tinystl::Unordered_setTest::testAllCases(); */
 	tinystl::VectorTest::testAllCases();
+    tinystl::SetTest::testCaseAll();
+    tinystl::MapTest::testCaseAll();
     /* tinystl::RBTreeTest::testAllCase(); */
 	 
 	return 0;

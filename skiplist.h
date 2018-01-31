@@ -135,6 +135,7 @@ public:
     typedef Key         key_type;
     typedef Value       value_type;
     typedef Compare     key_compare;
+    typedef Compare     value_compare;
 
     typedef SkipListNode<Value, Alloc>      node_type;
     typedef node_type*                      node_pointer;
@@ -142,6 +143,7 @@ public:
     typedef SkipListIterator<Value, Alloc>  iterator;
     typedef const iterator                  const_iterator;
     typedef tinystl::reverse_iterator<iterator> reverse_iterator;
+    typedef const reverse_iterator          const_reverse_iterator;
 
     typedef std::size_t                     size_type;
     
@@ -222,11 +224,15 @@ public:
     void clear();
     
     size_type count(const key_type& key) const;
-    const_iterator find(const key_type& key) const;
+    iterator find(const key_type& key) ;
+    const_iterator find(const key_type& key) const { return const_cast<SkipList*>(this)->find(key); }
 
     std::pair<iterator, iterator> equal_range(const key_type& key);
+    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
     iterator lower_bound(const key_type& key) { return equal_range(key).first; }
+    const_iterator lower_bound(const key_type& key) const { return equal_range(key).first; }
     iterator upper_bound(const key_type& key) { return equal_range(key).second; }
+    const_iterator upper_bound(const key_type& key) const { return equal_range(key).second; }
 
     void swap(Self& other)
     {
@@ -234,6 +240,9 @@ public:
         std::swap(tail_, other.tail_);
         std::swap(maxLevels_, other.maxLevels_);
     }
+public:
+    key_compare key_comp() const { return  key_compare(); }
+    value_compare value_comp() const { return value_compare(); }
 private:
     iterator insertAux(const value_type& value, InPattern pattern);
 private:
@@ -332,8 +341,8 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::insertAux(const value_type& va
     }
     if(pattern == InPattern::UNIQUE &&
        cur->levels[0].next != tail_ && 
-       !comp_(cur->levels[0].next->value, KeyOfValue()(value)) && 
-       !comp_(KeyOfValue()(value),  cur->levels[0].next->value))
+       !comp_(KeyOfValue()(cur->levels[0].next->value), KeyOfValue()(value)) && 
+       !comp_(KeyOfValue()(value),  KeyOfValue()(cur->levels[0].next->value)))
         return iterator(nullptr);
     
     size_type level = randomLevel();
@@ -367,8 +376,8 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::erase(const value_type& value)
     for(int i = maxLevels_ - 1; i >= 0; --i)
     {
         if(prevs[i]->levels[i].next != tail_ && 
-           !comp_(KeyOfValue()(value), prevs[i]->levels[i].next->value) &&
-           !comp_(prevs[i]->levels[i].next->value, KeyOfValue()(value)))
+           !comp_(KeyOfValue()(value), KeyOfValue()(prevs[i]->levels[i].next->value)) &&
+           !comp_(KeyOfValue()(prevs[i]->levels[i].next->value), KeyOfValue()(value)))
         {
             eraseNode = prevs[i]->levels[i].next;
             prevs[i]->levels[i].next = prevs[i]->levels[i].next->levels[i].next;
@@ -403,7 +412,7 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::count(const key_type& key) con
 {
     size_type cnt = 0;
     node_pointer cur = header_;
-    for(int i = maxLevels_; i >= 0; --i)
+    for(int i = maxLevels_ - 1; i >= 0; --i)
     {
         while(cur->levels[i].next != tail_ && comp_(KeyOfValue()(cur->levels[i].next->value), key))
             cur = cur->levels[i].next;
@@ -411,7 +420,7 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::count(const key_type& key) con
     cur = cur->levels[0].next;
     while(cur != tail_ &&
           !comp_(KeyOfValue()(cur->value), key) &&
-          !comp_(key, KeyOfValue()(cur->next->value)))
+          !comp_(key, KeyOfValue()(cur->value)))
     {
         ++cnt;
         cur = cur->levels[0].next;
@@ -421,20 +430,20 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::count(const key_type& key) con
 
 
 template <class Key, class Value, class KeyOfValue, class Compare, class Alloc>
-typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator
-SkipList<Key, Value, KeyOfValue, Compare, Alloc>::find(const key_type& key) const
+typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::iterator
+SkipList<Key, Value, KeyOfValue, Compare, Alloc>::find(const key_type& key)
 {
     node_pointer cur = header_;
-    for(int i = maxLevels_; i >= 0; --i)
+    for(int i = maxLevels_ - 1; i >= 0; --i)
     {
         while(cur->levels[i].next != tail_ && comp_(KeyOfValue()(cur->levels[i].next->value), key))
             cur = cur->levels[i].next;
     }
     if(cur->levels[0].next != tail_ &&
       !comp_(KeyOfValue()(cur->levels[0].next->value), key) &&
-      !comp_(key, KeyOfValue()(cur->levels[0].next->next->value)))
+      !comp_(key, KeyOfValue()(cur->levels[0].next->value)))
     {
-        return const_iterator(cur);
+        return iterator(cur->levels[0].next);
     }
     else
     {
@@ -471,6 +480,16 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::equal_range(const key_type& ke
         }
     }
     return std::make_pair(iterator(leftBound), iterator(rightBound));
+}
+          
+template <class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+std::pair<typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator,
+          typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator>
+SkipList<Key, Value, KeyOfValue, Compare, Alloc>::equal_range(const key_type& key) const
+{
+    auto p = const_cast<SkipList*>(this)->equal_range(key);
+    return std::make_pair(static_cast<const_iterator>(p.first),
+                          static_cast<const_iterator>(p.second));
 }
           
 

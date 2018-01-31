@@ -4,7 +4,6 @@
 #include "construct.h"
 #include "vector.h"
 
-#include <cstring>
 #include <memory>
 #include <iterator>
 #include <algorithm>
@@ -247,6 +246,7 @@ public:
     size_type find_last_not_of(const_pointer s, size_type pos = npos) const;
     size_type find_last_not_of(value_type ch, size_type pos = npos) const;
     size_type find_last_not_of(const_pointer s, size_type pos, size_type count) const;
+
 private:
     void enableCapacityToAdd(size_type addCount);
 };

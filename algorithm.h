@@ -1,5 +1,7 @@
 #pragma once
-#include <iostream>
+
+#include <algorithm>
+
 
 #include "iterator.h"
 namespace tinystl
@@ -74,7 +76,6 @@ void pop_heap(RandomIterator first, RandomIterator last, Compare comp)
     }
     *currentIt = value;
 }
-
 
 
 
