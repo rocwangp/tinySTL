@@ -103,6 +103,8 @@ public:
     }
 
     size_type erase(const key_type& key) { return cont_.erase(key); }
+    iterator erase(iterator pos) { return cont_.erase(pos); }
+
 
     size_type count(const key_type& key) const { return cont_.count(key); }
     iterator find(const key_type& key) { return cont_.find(key); }

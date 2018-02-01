@@ -221,6 +221,13 @@ public:
     iterator insert_multi(const value_type& value) { return insertAux(value, InPattern::MULTI); }
 
     size_type erase(const value_type& value);
+    iterator erase(iterator pos)
+    {
+        iterator it = pos++;
+        erase(*it);
+        return pos;
+    }
+
     void clear();
     
     size_type count(const key_type& key) const;
@@ -389,6 +396,7 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::erase(const value_type& value)
         destroyNode(eraseNode);
     }
 }
+
 
 
 template <class Key, class Value, class KeyOfValue, class Compare, class Alloc>

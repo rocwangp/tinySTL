@@ -24,7 +24,7 @@ struct ListNode
 
 template <class U>
 class ListIterator : 
-    public iterator<bidirectional_iterator_tag, U>
+    public iterator<std::bidirectional_iterator_tag, U>
 {
 public:
    ListNode<U>* node_; 
@@ -785,4 +785,9 @@ bool operator!=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 
 
 
+template <class T, class Alloc>
+void swap(list<T, Alloc>& lhs, list<T, Alloc>& rhs)
+{
+    lhs.swap(rhs);
+}
 }

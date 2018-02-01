@@ -23,7 +23,7 @@
 /* #include "Test\TypeTraitsTest.h" */
 /* #include "Test\UFSetTest.h" */
 /* #include "Test\UniquePtrTest.h" */
-/* #include "Test\Unordered_setTest.h" */
+#include "Test/UnorderedSetTest.h"
 #include "Test/VectorTest.h"
 #include "Test/RBTreeTest.h"
 #include "Test/SkipListTest.h"
@@ -55,7 +55,7 @@ int main(){
 	/* tinystl::TypeTraitsTest::testAllCases(); */
 	/* tinystl::UFSetTest::testAllCases(); */
 	/* tinystl::UniquePtrTest::testAllCases(); */
-	/* tinystl::Unordered_setTest::testAllCases(); */
+	tinystl::UnorderedSetTest::testAllCases();
 	tinystl::VectorTest::testAllCases();
     tinystl::SetTest::testCaseAll();
     tinystl::MapTest::testCaseAll();
