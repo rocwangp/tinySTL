@@ -27,10 +27,10 @@ public:
     }
 
 private:
-    static void* mallocHandle(std::size_t n) {
+    static void* mallocHandle(std::size_t) {
         return nullptr;
     }
-    static void* reallocHandle(std::size_t n) {
+    static void* reallocHandle(std::size_t) {
         return nullptr;
     }
 };

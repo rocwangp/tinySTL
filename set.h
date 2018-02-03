@@ -82,13 +82,13 @@ public:
 
     void clear() noexcept { cont_.clear(); }
 
-    std::pair<iterator, bool> insert(const value_type& value)
+    tinystl::pair<iterator, bool> insert(const value_type& value)
     {
         iterator it = cont_.insert_unique(value);
         if(it == end())
-            return std::make_pair(it, false);
+            return tinystl::make_pair(it, false);
         else
-            return std::make_pair(it, true);
+            return tinystl::make_pair(it, true);
     }
 
     template <class InputIterator>
@@ -111,8 +111,8 @@ public:
     iterator find(const key_type& key) { return cont_.find(key); }
     const_iterator find(const key_type& key) const { return cont_.find(key); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& key) { return cont_.equal_range(key); }
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const { return cont_.equal_range(key); }
+    tinystl::pair<iterator, iterator> equal_range(const key_type& key) { return cont_.equal_range(key); }
+    tinystl::pair<const_iterator, const_iterator> equal_range(const key_type& key) const { return cont_.equal_range(key); }
 
     iterator lower_bound(const key_type& key) { return cont_.lower_bound(key); }
     const_iterator lower_bound(const key_type& key) const { return cont_.lower_bound(key); }

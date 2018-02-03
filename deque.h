@@ -3,6 +3,7 @@
 #include "iterator.h"
 #include "alloc.h"
 #include "construct.h"
+#include "memory.h"
 #include "algorithm.h"
 
 #include <memory>
@@ -319,8 +320,8 @@ void deque<T, Alloc, BufSize>::ctorAux(size_type count, const value_type& value,
 {
     createMap(count);
     for(map_pointer cur = start_.map_; cur != finish_.map_; ++cur)
-        std::uninitialized_fill(*cur, *cur + bufferSize(), value);
-    std::uninitialized_fill(finish_.first_, finish_.cur_, value);
+        tinystl::uninitialized_fill(*cur, *cur + bufferSize(), value);
+    tinystl::uninitialized_fill(finish_.first_, finish_.cur_, value);
 }
 
 template <class T, class Alloc, size_t BufSize>
@@ -331,10 +332,10 @@ void deque<T, Alloc, BufSize>::ctorAux(InputIterator first, InputIterator last, 
     createMap(count);
     for(map_pointer cur = start_.map_; cur != finish_.map_; ++cur)
     {
-        std::uninitialized_copy(first, first + bufferSize(), *cur);
+        tinystl::uninitialized_copy(first, first + bufferSize(), *cur);
         first += bufferSize();
     }
-    std::uninitialized_copy(first, last, finish_.first_);
+    tinystl::uninitialized_copy(first, last, finish_.first_);
 }
 
 template <class T, class Alloc, size_t BufSize>
@@ -435,84 +436,6 @@ void deque<T, Alloc, BufSize>::clear() noexcept
     finish_ = start_;
 }
 
-/* template <class T, class Alloc, size_t BufSize> */
-/* typename deque<T, Alloc, BufSize>::iterator */
-/* deque<T, Alloc, BufSize>::insert(iterator pos, const value_type& value) */
-/* { */
-/*     return insert(pos, 1, value); */
-/* } */
-
-/* template <class T, class Alloc, size_t BufSize> */
-/* typename deque<T, Alloc, BufSize>::iterator */
-/* deque<T, Alloc, BufSize>::insert(iterator pos, size_type count, const value_type& value) */
-/* { */
-/*     return insertAux(pos, count, value, std::is_integral<size_type>()); */
-/* } */
-
-/* template <class T, class Alloc, size_t BufSize> */
-/* template <class InputIterator> */
-/* typename deque<T, Alloc, BufSize>::iterator */
-/* deque<T, Alloc, BufSize>::insert(iterator pos, InputIterator first, InputIterator last) */ 
-/* { */
-/*     return insertAux(pos, first, last, std::is_integral<InputIterator>()); */
-/* } */
-
-/* template <class T, class Alloc, size_t BufSize> */
-/* typename deque<T, Alloc, BufSize>::iterator */
-/* deque<T, Alloc, BufSize>::insertAux(iterator pos, size_type count, const value_type& value, std::true_type) */
-/* { */
-/*     const size_type disFromStart = pos - start_; */
-/*     const size_type disToFinish = finish_ - pos; */
-/*     if(disFromStart < disToFinish) */
-/*     { */
-/*         for(size_type i = 0; i < count; ++i) */
-/*             push_front(front()); */
-/*         std::copy(begin() + count, pos, begin()); */
-/*         std::fill_n(pos - count, count, value); */
-/*         return pos - count; */
-/*     } */
-/*     else */
-/*     { */
-/*         for(size_type i = 0; i < count; ++i) */
-/*             push_back(back()); */
-/*         std::copy_backward(pos, end() - count, end() - 1); */
-/*         std::fill_n(pos, count, value); */
-/*         return pos; */
-/*     } */
-/* } */
-
-/* template <class T, class Alloc, size_t BufSize> */
-/* template <class InputIterator> */
-/* typename deque<T, Alloc, BufSize>::iterator */
-/* deque<T, Alloc, BufSize>::insertAux(iterator pos, InputIterator first, InputIterator last, std::false_type) */ 
-/* { */   
-/*     const size_type disFromStart = pos - start_; */
-/*     const size_type disToFinish = finish_ - pos; */
-/*     const size_type count = std::distance(first, last); */
-/*     if(disFromStart < disToFinish) */
-/*     { */
-/*         for(size_type i = 0; i < count; ++i) */
-/*             push_front(front()); */
-/*         std::copy(begin() + count, pos, begin()); */
-/*         std::copy(first, last, pos - count); */
-/*         return pos - count; */
-/*     } */
-/*     else */
-/*     { */
-/*         for(size_type i = 0; i < count; ++i) */
-/*             push_back(back()); */
-/*         std::copy_backward(pos, end() - count, end() - 1); */
-/*         std::copy(first, last, pos); */
-/*         return pos; */
-/*     } */
-/* } */
-
-/* template <class T, class Alloc, size_t BufSize> */
-/* typename deque<T, Alloc, BufSize>::iterator */
-/* deque<T, Alloc, BufSize>::insert(iterator pos, std::initializer_list<T> ilist) */
-/* { */
-/*     return insert(pos, ilist.begin(), ilist.end()); */
-/* } */
 
 
 
@@ -543,7 +466,7 @@ void deque<T, Alloc, BufSize>::reallocate_map(size_type addCount)
     map_pointer newStart = newMap + (newMapSize - (oldMapSize + addCount)) / 2;
     map_pointer newFinish = newStart + oldMapSize + addCount - 1;
     /* 不需要copy数据，只需要copy指针即可 */
-    std::uninitialized_copy(start_.map_, finish_.map_ + 1, newStart);
+    tinystl::uninitialized_copy(start_.map_, finish_.map_ + 1, newStart);
     /* 只需要释放申请的map指针，实际数据保留 */
     mapAllocator::deallocate(map_);
     map_ = newMap;

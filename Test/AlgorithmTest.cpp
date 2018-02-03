@@ -185,7 +185,6 @@ namespace tinystl{
 			tinystl::advance(vit, 5);
 			tinystl::advance(lit, 5);
 			tinystl::advance(bit, 5);
-            bst.print_inorder();
 			assert(*vit == 5 && *lit == 5 && *bit == 5);
 
 			tinystl::advance(vit, -5);
@@ -211,9 +210,7 @@ namespace tinystl{
 				for (auto& n : arr4){
 					n = rd() % 65536;
 				}
-                /* tinystl::Test::print(arr4); */
 				tinystl::sort(std::begin(arr4), std::end(arr4));
-                /* tinystl::Test::print(arr4); */
 				assert(std::is_sorted(std::begin(arr4), std::end(arr4)));
 			}
 		}

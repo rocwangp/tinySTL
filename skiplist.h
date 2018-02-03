@@ -3,6 +3,7 @@
 #include "alloc.h"
 #include "iterator.h"
 #include "vector.h"
+#include "utility.h"
 #include "algorithm.h"
 
 #include <memory>
@@ -44,7 +45,7 @@ public:
           levelNums(l)
     {
         levels = levelAllocator::allocate(levelNums);
-        std::uninitialized_fill_n(levels, levelNums, level_type());
+        tinystl::uninitialized_fill_n(levels, levelNums, level_type());
     }
     ~SkipListNode()
     {
@@ -235,8 +236,8 @@ public:
     iterator find(const key_type& key) ;
     const_iterator find(const key_type& key) const { return const_cast<SkipList*>(this)->find(key); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& key);
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+    tinystl::pair<iterator, iterator> equal_range(const key_type& key);
+    tinystl::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
     iterator lower_bound(const key_type& key) { return equal_range(key).first; }
     const_iterator lower_bound(const key_type& key) const { return equal_range(key).first; }
     iterator upper_bound(const key_type& key) { return equal_range(key).second; }
@@ -462,8 +463,8 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::find(const key_type& key)
 
 
 template <class Key, class Value, class KeyOfValue, class Compare, class Alloc>
-std::pair<typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::iterator,
-          typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::iterator>
+tinystl::pair<typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::iterator,
+              typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::iterator>
 SkipList<Key, Value, KeyOfValue, Compare, Alloc>::equal_range(const key_type& key)
 {
     node_pointer cur = header_;
@@ -488,16 +489,16 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::equal_range(const key_type& ke
             rightBound = rightBound->levels[0].next;
         }
     }
-    return std::make_pair(iterator(leftBound), iterator(rightBound));
+    return tinystl::make_pair(iterator(leftBound), iterator(rightBound));
 }
           
 template <class Key, class Value, class KeyOfValue, class Compare, class Alloc>
-std::pair<typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator,
-          typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator>
+tinystl::pair<typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator,
+              typename SkipList<Key, Value, KeyOfValue, Compare, Alloc>::const_iterator>
 SkipList<Key, Value, KeyOfValue, Compare, Alloc>::equal_range(const key_type& key) const
 {
     auto p = const_cast<SkipList*>(this)->equal_range(key);
-    return std::make_pair(static_cast<const_iterator>(p.first),
+    return tinystl::make_pair(static_cast<const_iterator>(p.first),
                           static_cast<const_iterator>(p.second));
 }
           

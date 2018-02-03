@@ -2,10 +2,10 @@
 
 #include <type_traits>
 #include <algorithm>
-#include <memory>
 
 #include <cstdint>
 #include "alloc.h"
+#include "memory.h"
 #include "iterator.h"
 #include "algorithm.h"
 
@@ -160,7 +160,7 @@ void vector<T, Alloc>::ctorAux(size_type count, const value_type& value, std::tr
     start_ = dataAllocator::allocate(count);
     finish_ = start_ + count;
     end_ = finish_;
-    std::uninitialized_fill_n(start_, count, value);
+    tinystl::uninitialized_fill_n(start_, count, value);
 }
 
 template <class T, class Alloc>
@@ -170,7 +170,7 @@ void vector<T, Alloc>::ctorAux(InputIterator first, InputIterator last, std::fal
     start_ = dataAllocator::allocate(last - first);
     finish_ = start_ + (last - first);
     end_ = finish_;
-    std::uninitialized_copy(first, last, start_);
+    tinystl::uninitialized_copy(first, last, start_);
 }
 
 template <class T, class Alloc>
@@ -194,7 +194,7 @@ vector<T, Alloc>::vector(const vector& other)
       finish_(start_ + other.size()),
       end_(start_ + other.size())
 {
-    std::uninitialized_copy(other.begin(), other.end(), start_);
+    tinystl::uninitialized_copy(other.begin(), other.end(), start_);
 }
 
 template <class T, class Alloc>
@@ -314,7 +314,7 @@ void vector<T, Alloc>::reserve(size_type new_cap)
     {
         const size_type oldSize = size();
         iterator start = dataAllocator::allocate(new_cap);
-        std::uninitialized_copy(begin(), end(), start);
+        tinystl::uninitialized_copy(begin(), end(), start);
         destroy(begin(), end());
         dataAllocator::deallocate(begin());
         start_ = start;
@@ -330,7 +330,7 @@ void vector<T, Alloc>::shrink_to_fit()
         return;
     const size_type n = size();
     iterator start = dataAllocator::allocate(n);
-    std::uninitialized_copy(begin(), end(), start);
+    tinystl::uninitialized_copy(begin(), end(), start);
     destroy(begin(), end());
     dataAllocator::deallocate(begin());
     start_ = start;
@@ -374,15 +374,15 @@ vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& val
         {
             if(count >= end() - pos)
             {
-                iterator last = std::uninitialized_fill_n(end(), count - (end() - pos), value);
-                std::uninitialized_copy(pos, end(), last);
-                std::fill(pos, end(), value);
+                iterator last = tinystl::uninitialized_fill_n(end(), count - (end() - pos), value);
+                tinystl::uninitialized_copy(pos, end(), last);
+                tinystl::fill(pos, end(), value);
             }
             else
             {
-                std::uninitialized_copy(end() - count, end(), end());
-                std::copy_backward(pos, end() - count, end());
-                std::fill_n(pos, count, value);
+                tinystl::uninitialized_copy(end() - count, end(), end());
+                tinystl::copy_backward(pos, end() - count, end());
+                tinystl::fill_n(pos, count, value);
             }
             finish_ += count;
         }
@@ -391,9 +391,9 @@ vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& val
             const size_type oldSize = size();
             const size_type newSize = oldSize + tinystl::max(oldSize, count);
             iterator start = dataAllocator::allocate(newSize);
-            iterator it = std::uninitialized_copy(begin(), pos, start);
-            it = std::uninitialized_fill_n(it, count, value);
-            std::uninitialized_copy(pos, end(), it);
+            iterator it = tinystl::uninitialized_copy(begin(), pos, start);
+            it = tinystl::uninitialized_fill_n(it, count, value);
+            tinystl::uninitialized_copy(pos, end(), it);
             destroy(begin(), end());
             dataAllocator::deallocate(start_);
             start_ = start;
@@ -415,14 +415,14 @@ vector<T, Alloc>::insertAux(iterator pos, InputIterator first, InputIterator las
     {
         if(count >= end() - pos)
         {
-            std::uninitialized_copy(pos, end(), pos + count);
-            std::copy(first, last, pos);
+            tinystl::uninitialized_copy(pos, end(), pos + count);
+            tinystl::copy(first, last, pos);
         }
         else
         {
-            std::uninitialized_copy(end() - count, end(), end());
-            std::copy_backward(pos, pos + count, end());
-            std::copy(first, last, pos);
+            tinystl::uninitialized_copy(end() - count, end(), end());
+            tinystl::copy_backward(pos, pos + count, end());
+            tinystl::copy(first, last, pos);
         }
         finish_ += count;
     }
@@ -431,9 +431,9 @@ vector<T, Alloc>::insertAux(iterator pos, InputIterator first, InputIterator las
         const size_type oldSize = size();
         const size_type newSize = oldSize + tinystl::max(oldSize, count);
         iterator start = dataAllocator::allocate(newSize);
-        iterator it = std::uninitialized_copy(begin(), pos, start);
-        it = std::uninitialized_copy(first, last, it);
-        std::uninitialized_copy(pos, end(), it);
+        iterator it = tinystl::uninitialized_copy(begin(), pos, start);
+        it = tinystl::uninitialized_copy(first, last, it);
+        tinystl::uninitialized_copy(pos, end(), it);
         start_ = start;
         finish_ = start_ + oldSize + count;
         end_ = start_ + newSize;
@@ -459,8 +459,8 @@ vector<T, Alloc>::erase(iterator first, iterator last)
     const auto prevSize = first - begin();
     const auto uninitCopySize = tinystl::min(eraseSize, lastSize);
     destroy(first, last);
-    iterator it = std::uninitialized_copy(last, last + uninitCopySize, first);
-    std::copy(last + uninitCopySize, end(), it);
+    iterator it = tinystl::uninitialized_copy(last, last + uninitCopySize, first);
+    tinystl::copy(last + uninitCopySize, end(), it);
     destroy(end() - uninitCopySize, end());
     finish_ = end() - eraseSize;
     return begin() + prevSize;

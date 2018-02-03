@@ -3,6 +3,7 @@
 #include "alloc.h"
 #include "iterator.h"
 #include "queue.h"
+#include "utility.h"
 #include "algorithm.h"
 
 #include <algorithm>
@@ -23,7 +24,7 @@ struct TreeNode
     {  }
 
 
-    std::pair<Key, Value> p;
+    tinystl::pair<Key, Value> p;
     TreeNode* parent;
     TreeNode* left;
     TreeNode* right;
@@ -52,7 +53,7 @@ class TreeIterator
 {
 public:
     typedef bidirectional_iterator_tag      iterator_category;
-    typedef std::pair<Key, Value>           data_type;
+    typedef tinystl::pair<Key, Value>           data_type;
     typedef std::size_t                     size_type;
     typedef std::ptrdiff_t                  difference_type;
     typedef TreeNode<Key, Value>*           pointer;
@@ -166,7 +167,7 @@ class avl_tree
 public:
     typedef Key     key_type;
     typedef Value   value_type;
-    typedef std::pair<key_type, value_type> data_type;
+    typedef tinystl::pair<key_type, value_type> data_type;
     typedef Compare compare_type;
     typedef std::size_t size_type;
     typedef TreeNode<key_type, value_type>      node_type;

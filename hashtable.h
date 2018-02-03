@@ -4,6 +4,7 @@
 #include "iterator.h"
 #include "vector.h"
 #include "list.h"
+#include "utility.h"
 #include "algorithm.h"
 
 
@@ -227,7 +228,7 @@ public:
 
     size_type count(const key_type& key) const;
     
-    std::pair<iterator, iterator> equal_range(const key_type& key);
+    tinystl::pair<iterator, iterator> equal_range(const key_type& key);
 
     void swap(Self& other)
     {
@@ -368,14 +369,14 @@ HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::count(const key_type& 
 
 
 template <class Key, class Value, class KeyOfValue, class Hash, class KeyEqual, class Alloc>
-std::pair<typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::iterator,
-          typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::iterator>
+tinystl::pair<typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::iterator,
+              typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::iterator>
 HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::equal_range(const key_type& key)
 {
     iterator it = find(key);
     iterator first = it;
     iterator last = ++it;
-    return std::make_pair(first, last);
+    return tinystl::make_pair(first, last);
 }
 
 

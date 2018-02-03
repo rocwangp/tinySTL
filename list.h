@@ -392,14 +392,9 @@ template <class T, class Alloc>
 typename list<T, Alloc>::size_type
 list<T, Alloc>::size() const noexcept
 {
-    iterator it = begin();
-    size_type n = 0;
-    while(it != end())
-    {
-        ++n;
-        ++it;
-    }
-    return n;
+    iterator first = begin();
+    iterator last = end();
+    return tinystl::distance(first, last);
 }
 
 

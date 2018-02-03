@@ -263,7 +263,7 @@ void basic_string<T, Traits, Alloc>::enableCapacityToAdd(size_type addCount)
         const size_type oldSize = size();
         const size_type newSize = oldSize + tinystl::max(oldSize, addCount);
         iterator newStart = dataAllocator::allocate(newSize + 1);
-        std::uninitialized_copy(begin(), end(), newStart);
+        tinystl::uninitialized_copy(begin(), end(), newStart);
         destroy(begin(), end() + 1);
         dataAllocator::deallocate(begin());
         start_ = newStart;
@@ -279,7 +279,7 @@ basic_string<T, Traits, Alloc>::basic_string(size_type count, value_type value)
       finish_(start_ + count),
       end_(finish_)
 {
-    std::uninitialized_fill_n(start_, count, value);
+    tinystl::uninitialized_fill_n(start_, count, value);
     construct(finish_, value_type());
 }
 
@@ -292,7 +292,7 @@ basic_string<T, Traits, Alloc>::basic_string(const basic_string& other, size_typ
         count = other.size() - pos;
     start_ = dataAllocator::allocate(count + 1);
     finish_ = end_ = start_ + count;
-    std::uninitialized_copy(other.begin() + pos, other.begin() + pos + count, start_);
+    tinystl::uninitialized_copy(other.begin() + pos, other.begin() + pos + count, start_);
     construct(finish_, value_type());
 }
 
@@ -318,7 +318,7 @@ basic_string<T, Traits, Alloc>::basic_string(InputIterator first, InputIterator 
     start_ = (dataAllocator::allocate(count + 1));
     finish_ = start_ + count;
     end_ = finish_;
-    std::uninitialized_copy(first, last, start_);
+    tinystl::uninitialized_copy(first, last, start_);
 
     construct(finish_, value_type());
 }
@@ -417,7 +417,7 @@ void basic_string<T, Traits, Alloc>::shrink_to_fit()
 {
     const size_type newSize = size();
     iterator newStart = dataAllocator::allocate(newSize + 1);
-    std::uninitialized_copy(begin(), end(), newStart);
+    tinystl::uninitialized_copy(begin(), end(), newStart);
     tinystl::destroy(begin(), end() + 1);
     dataAllocator::deallocate(begin());
     start_ = newStart;
@@ -461,9 +461,9 @@ basic_string<T, Traits, Alloc>::insert(const_iterator pos, size_type count, valu
         const size_type oldSize = size();
         const size_type newSize = oldSize + tinystl::max(oldSize, count);
         iterator newStart = dataAllocator::allocate(newSize + 1);
-        auto it = std::uninitialized_copy(begin(), begin() + prevSize, newStart);
-        it = std::uninitialized_fill_n(it, count, ch);
-        std::uninitialized_copy(pos, end(), it);
+        auto it = tinystl::uninitialized_copy(begin(), begin() + prevSize, newStart);
+        it = tinystl::uninitialized_fill_n(it, count, ch);
+        tinystl::uninitialized_copy(pos, end(), it);
         tinystl::destroy(begin(), end() + 1);
         dataAllocator::deallocate(begin());
         start_ = newStart;
@@ -476,8 +476,8 @@ basic_string<T, Traits, Alloc>::insert(const_iterator pos, size_type count, valu
         if(finish_ - pos > count)
         {
             tinystl::destroy(end());
-            auto it = std::uninitialized_copy(end() - count, end(), end());
-            std::copy_backward(pos, end() - count, end());
+            auto it = tinystl::uninitialized_copy(end() - count, end(), end());
+            tinystl::copy_backward(pos, end() - count, end());
             std::fill_n(pos, count, ch);
             finish_ += count;
             construct(finish_, value_type());
@@ -485,8 +485,8 @@ basic_string<T, Traits, Alloc>::insert(const_iterator pos, size_type count, valu
         else
         {
             tinystl::destroy(end());
-            std::uninitialized_fill(end(), pos + count, value_type());
-            std::uninitialized_copy(pos, end(), pos + count);
+            tinystl::uninitialized_fill(end(), pos + count, value_type());
+            tinystl::uninitialized_copy(pos, end(), pos + count);
             std::fill_n(pos, count, ch);
             finish_ += count; 
             construct(finish_, value_type());
@@ -508,9 +508,9 @@ basic_string<T, Traits, Alloc>::insert(const_iterator pos, InputIterator first, 
         const size_type oldSize = size();
         const size_type newSize = oldSize + tinystl::max(oldSize, count);
         iterator newStart = dataAllocator::allocate(newSize + 1);
-        auto it = std::uninitialized_copy(begin(), pos, newStart);
-        it = std::uninitialized_copy(first, last, it);
-        std::uninitialized_copy(pos, end(), it);
+        auto it = tinystl::uninitialized_copy(begin(), pos, newStart);
+        it = tinystl::uninitialized_copy(first, last, it);
+        tinystl::uninitialized_copy(pos, end(), it);
         tinystl::destroy(begin(), end() + 1);
         dataAllocator::deallocate(begin());
         start_ = newStart;
@@ -523,18 +523,18 @@ basic_string<T, Traits, Alloc>::insert(const_iterator pos, InputIterator first, 
         if(finish_ - pos > count)
         {
             tinystl::destroy(end());
-            auto it = std::uninitialized_copy(end() - count, end(), end());
-            std::copy_backward(pos, end() - count, end());
-            std::copy(first, last, pos);
+            auto it = tinystl::uninitialized_copy(end() - count, end(), end());
+            tinystl::copy_backward(pos, end() - count, end());
+            tinystl::copy(first, last, pos);
             finish_ += count;
             construct(finish_, value_type());
         }
         else
         {
             tinystl::destroy(end());
-            std::uninitialized_fill(end(), pos + count, value_type());
-            std::uninitialized_copy(pos, end(), pos + count);
-            std::copy(first, last, pos);
+            tinystl::uninitialized_fill(end(), pos + count, value_type());
+            tinystl::uninitialized_copy(pos, end(), pos + count);
+            tinystl::copy(first, last, pos);
             finish_ += count; 
             construct(finish_, value_type());
         }
@@ -568,7 +568,7 @@ basic_string<T, Traits, Alloc>::erase(size_type index, size_type count)
     if(count == npos)
         count = size() - index;
     const size_type lastSize = size() - index - count;
-    std::copy(begin() + index + count, end(), begin() + index);
+    tinystl::copy(begin() + index + count, end(), begin() + index);
     tinystl::destroy(end() - lastSize, end());
     finish_ -= count;
     construct(finish_, value_type());
@@ -580,7 +580,7 @@ basic_string<T, Traits, Alloc>::erase(const_iterator first, const_iterator last)
 {
     const size_type prevSize = tinystl::distance(begin(), first);
     const size_type count = tinystl::distance(first, last);
-    std::copy(last, end(), first);
+    tinystl::copy(last, end(), first);
     tinystl::destroy(end() - count, end() + 1);
     finish_ -= count; 
     construct(finish_, value_type());

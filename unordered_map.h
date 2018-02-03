@@ -11,7 +11,7 @@ class unordered_map
 public:
     typedef Key                         key_type;
     typedef T                           mapped_type;
-    typedef std::pair<const Key, T>     value_type;
+    typedef tinystl::pair<const Key, T>     value_type;
     typedef std::size_t                 size_type;
     typedef std::ptrdiff_t              difference_type;
     typedef Hash                        hasher;
@@ -80,13 +80,13 @@ public:
 
     void clear() { cont_.clear(); }
 
-    std::pair<iterator, bool> insert(const value_type& value)
+    tinystl::pair<iterator, bool> insert(const value_type& value)
     {
         iterator it = cont_.insert(value);
         if(it == end())
-            return std::make_pair(it, false);
+            return tinystl::make_pair(it, false);
         else
-            return std::make_pair(it, true);
+            return tinystl::make_pair(it, true);
     }
     template <class InputIterator>
     void insert(InputIterator first ,InputIterator last)
@@ -109,7 +109,7 @@ public:
         cont_.swap(other.cont_);
     }
 public:
-    mapped_type& operator[](const key_type& key) { return cont_.insert(std::make_pair(key, mapped_type()))->second; }
+    mapped_type& operator[](const key_type& key) { return cont_.insert(tinystl::make_pair(key, mapped_type()))->second; }
     mapped_type& at(const key_type& key) { return find(key)->second; }
     const mapped_type& at(const key_type& key) const { return find(key)->second; }
 
@@ -117,8 +117,8 @@ public:
     iterator find(const key_type& key) { return cont_.find(key); }
     const_iterator find(const key_type& key) const { return cont_.find(key); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& key) { return cont_.equal_range(key); }
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const { return cont_.equal_range(key); }
+    tinystl::pair<iterator, iterator> equal_range(const key_type& key) { return cont_.equal_range(key); }
+    tinystl::pair<const_iterator, const_iterator> equal_range(const key_type& key) const { return cont_.equal_range(key); }
 
 public:
     local_iterator begin(size_type n) { return cont_.begin(n); }

@@ -1,15 +1,16 @@
 #pragma once
 
-#include "alloc.h"
-
 #include <functional>
 #include <atomic>
-#include <algorithm>
 #include <iostream>
-#include <memory>
+
+#include "algorithm.h"
+#include "alloc.h"
+
 
 namespace tinystl
 {
+
 
 
 template <class T>
@@ -195,8 +196,8 @@ public:
 public:
     void swap(shared_ptr& other) noexcept
     {
-        std::swap(ctolBlkPtr_, other.ctolBlkPtr_);
-        std::swap(dataPtr_, other.dataPtr_);
+        tinystl::swap(ctolBlkPtr_, other.ctolBlkPtr_);
+        tinystl::swap(dataPtr_, other.dataPtr_);
     }
 private:
     template <class Y, class Deleter>
@@ -224,11 +225,11 @@ public:
         : dataPtr(nullptr),
           refCount(1),
           weakCount(0),
-          deleter(std::default_delete<T>())
+          deleter(tinystl::default_delete<T>())
     {  }
 
     template <class Y, class Deleter>
-    explicit ControlBlock(Y* ptr, Deleter d = default_delete<T>())
+    explicit ControlBlock(Y* ptr, Deleter d = tinystl::default_delete<T>())
         : dataPtr(ptr),
           refCount(1),
           weakCount(0),
@@ -451,4 +452,51 @@ bool operator!=(std::nullptr_t,
 }
 
 
+template <class InputIt, class ForwardIt>
+ForwardIt uninitialized_copy(InputIt first, InputIt last, ForwardIt d_first)
+{
+    while(first != last)
+    {
+        tinystl::construct(d_first, *first);
+        ++first;
+        ++d_first;
+    }
+    return d_first;
+}
+
+template <class InputIt, class Size, class ForwardIt>
+ForwardIt uninitialized_copy_n(InputIt first, Size count, ForwardIt d_first)
+{
+    while(count--)
+    {
+        tinystl::construct(d_first, *first);
+        ++first;
+        ++d_first;
+    }
+    return d_first;
+}
+
+
+template <class ForwardIt, class T>
+ForwardIt uninitialized_fill(ForwardIt first, ForwardIt last, const T& value)
+{
+    while(first != last)
+    {
+        tinystl::construct(first, value);
+        ++first;
+    }
+    return first;
+}
+
+
+template <class ForwardIt, class Size, class T>
+ForwardIt uninitialized_fill_n(ForwardIt first, Size count, const T& value)
+{
+    while(count--)
+    {
+        tinystl::construct(first, value);
+        ++first;
+    }
+    return first;
+}
 }

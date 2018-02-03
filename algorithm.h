@@ -2,7 +2,6 @@
 
 #include "iterator.h"
 #include "utility.h"
-#include <algorithm>
 #include <iostream>
 
 namespace tinystl
@@ -498,6 +497,19 @@ OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
 }
 
 
+template <class BidirIt1, class BidirIt2>
+BidirIt2 copy_backward(BidirIt1 first, BidirIt1 last, BidirIt2 d_last)
+{
+    --last;
+    while(true)
+    {
+        *d_last = *last;
+        if(last == first)
+            return d_last;
+        --d_last;
+        --last;
+    }
+}
 
 template <class BidirIt>
 void reverse(BidirIt first, BidirIt last)

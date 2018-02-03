@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utility.h"
 #include "hashtable.h"
 
 namespace tinystl
@@ -78,13 +79,13 @@ public:
 
     void clear() { cont_.clear(); }
 
-    std::pair<iterator, bool> insert(const value_type& value)
+    tinystl::pair<iterator, bool> insert(const value_type& value)
     {
         iterator it = cont_.insert(value);
         if(it == end())
-            return std::make_pair(it, false);
+            return tinystl::make_pair(it, false);
         else
-            return std::make_pair(it, true);
+            return tinystl::make_pair(it, true);
     }
 
     template <class InputIterator>
@@ -114,8 +115,8 @@ public:
     iterator find(const key_type& key) { return cont_.find(key); }
     const_iterator find(const key_type& key) const { return cont_.find(key); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& key) { return cont_.equal_range(key); }
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const { return cont_.equal_range(key); }
+    tinystl::pair<iterator, iterator> equal_range(const key_type& key) { return cont_.equal_range(key); }
+    tinystl::pair<const_iterator, const_iterator> equal_range(const key_type& key) const { return cont_.equal_range(key); }
 
 public:
     local_iterator begin(size_type n) { return cont_.begin(n); }
