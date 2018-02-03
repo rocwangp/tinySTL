@@ -3,6 +3,7 @@
 #include "iterator.h"
 #include "alloc.h"
 #include "construct.h"
+#include "algorithm.h"
 
 #include <iostream>
 
@@ -24,7 +25,7 @@ struct ListNode
 
 template <class U>
 class ListIterator : 
-    public iterator<std::bidirectional_iterator_tag, U>
+    public iterator<bidirectional_iterator_tag, U>
 {
 public:
    ListNode<U>* node_; 
@@ -311,7 +312,7 @@ list<T, Alloc>::operator=(const list<T, Alloc>& l)
     if(&l != this)
     {
         list<T, Alloc> tmp(l);
-        std::swap(tmp, *this);
+        tinystl::swap(tmp, *this);
     }
     return *this;
 }
@@ -324,7 +325,7 @@ list<T, Alloc>::operator=(list<T, Alloc>&& l)
     if(&l != this)
     {
         list<T, Alloc> tmp(std::move(l));
-        std::swap(tmp, *this);
+        tinystl::swap(tmp, *this);
     }
     return *this;
 }
@@ -334,7 +335,7 @@ list<T, Alloc>&
 list<T, Alloc>::operator=(std::initializer_list<T> ilist)
 {
     list tmp(ilist);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 template <class T, class Alloc>
@@ -352,7 +353,7 @@ template <class T, class Alloc>
 void list<T, Alloc>::assignAux(size_type count, const value_type& value, std::true_type)
 {
     list tmp(count, value);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 template <class T, class Alloc>
@@ -360,7 +361,7 @@ template <class InputIterator>
 void list<T, Alloc>::assignAux(InputIterator first, InputIterator last, std::false_type)
 {
     list tmp(first, last);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 template <class T, class Alloc>
@@ -381,7 +382,7 @@ template <class T, class Alloc>
 void list<T, Alloc>::assign(std::initializer_list<T> ilist)
 {
     list tmp(ilist);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 /* ****************************大小，容量相关************************ */
@@ -548,8 +549,8 @@ void list<T, Alloc>::resize(size_type count, const value_type& value)
 template <class T, class Alloc>
 void list<T, Alloc>::swap(list& other)
 {
-    std::swap(header_, other.header_);
-    std::swap(tail_, other.tail_);
+    tinystl::swap(header_, other.header_);
+    tinystl::swap(tail_, other.tail_);
 }
 
 
@@ -672,7 +673,7 @@ void list<T, Alloc>::reverse() noexcept
        prevNode = curNode;
        curNode = nextNode;
     }
-    std::swap(header_, tail_);
+    tinystl::swap(header_, tail_);
 }
 
 

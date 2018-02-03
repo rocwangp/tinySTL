@@ -73,10 +73,10 @@ public:
     ~priority_queue() {}
 
     priority_queue& operator=(const priority_queue& other)
-    { std::swap(priority_queue(other), *this); }
+    { tinystl::swap(priority_queue(other), *this); }
 
     priority_queue& operator=(priority_queue&& other)
-    { std::swap(priority_queue(std::move(other)), *this); }
+    { tinystl::swap(priority_queue(std::move(other)), *this); }
 
     const_reference top() const { return cont_.front(); }
 

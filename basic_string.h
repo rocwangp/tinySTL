@@ -3,6 +3,7 @@
 #include "alloc.h"
 #include "construct.h"
 #include "vector.h"
+#include "algorithm.h"
 
 #include <memory>
 #include <iterator>
@@ -99,12 +100,12 @@ public:
     const_reverse_iterator crend() const { return reverse_iterator(start_); }
 
     bool empty() const { return begin() == end(); }
-    size_type size() const { return std::distance(begin(), end()); } 
+    size_type size() const { return tinystl::distance(begin(), end()); } 
     size_type length() const { return size(); }
     size_type max_size() const { return static_cast<size_type>(-1); }
 
     void reserve(size_type newCap = 0);
-    size_type capacity() const { return std::distance(start_, end_); }
+    size_type capacity() const { return tinystl::distance(start_, end_); }
 
     void shrink_to_fit();
 
@@ -200,9 +201,9 @@ public:
 
     void swap(basic_string& other) noexcept 
     {
-        std::swap(start_, other.start_);
-        std::swap(finish_, other.finish_);
-        std::swap(end_, other.end_);
+        tinystl::swap(start_, other.start_);
+        tinystl::swap(finish_, other.finish_);
+        tinystl::swap(end_, other.end_);
     }
 
     size_type find(const basic_string& str, size_type pos = 0) const
@@ -214,7 +215,7 @@ public:
         const_pointer p = data() + pos;
         const_pointer findPos = traits_type::find(p, size() - pos, ch);
         if(findPos == nullptr)  return npos;
-        else    return std::distance(data(), findPos);
+        else    return tinystl::distance(data(), findPos);
     }
     size_type find(const_pointer s, size_type pos, size_type count) const;
 
@@ -260,7 +261,7 @@ void basic_string<T, Traits, Alloc>::enableCapacityToAdd(size_type addCount)
     if(end_ - finish_ < addCount)
     {
         const size_type oldSize = size();
-        const size_type newSize = oldSize + std::max(oldSize, addCount);
+        const size_type newSize = oldSize + tinystl::max(oldSize, addCount);
         iterator newStart = dataAllocator::allocate(newSize + 1);
         std::uninitialized_copy(begin(), end(), newStart);
         destroy(begin(), end() + 1);
@@ -454,11 +455,11 @@ template <class T, class Traits, class Alloc>
 typename basic_string<T, Traits, Alloc>::iterator
 basic_string<T, Traits, Alloc>::insert(const_iterator pos, size_type count, value_type ch)
 {
-    const size_type prevSize = std::distance(begin(), pos);
+    const size_type prevSize = tinystl::distance(begin(), pos);
     if(end_ - finish_ < count)
     {
         const size_type oldSize = size();
-        const size_type newSize = oldSize + std::max(oldSize, count);
+        const size_type newSize = oldSize + tinystl::max(oldSize, count);
         iterator newStart = dataAllocator::allocate(newSize + 1);
         auto it = std::uninitialized_copy(begin(), begin() + prevSize, newStart);
         it = std::uninitialized_fill_n(it, count, ch);
@@ -500,12 +501,12 @@ template <class InputIterator>
 typename basic_string<T, Traits, Alloc>::iterator
 basic_string<T, Traits, Alloc>::insert(const_iterator pos, InputIterator first, InputIterator last)
 {
-    const size_type count = std::distance(first, last);
-    const size_type prevSize = std::distance(begin(), pos);
+    const size_type count = tinystl::distance(first, last);
+    const size_type prevSize = tinystl::distance(begin(), pos);
     if(end_ - finish_ < count)
     {
         const size_type oldSize = size();
-        const size_type newSize = oldSize + std::max(oldSize, count);
+        const size_type newSize = oldSize + tinystl::max(oldSize, count);
         iterator newStart = dataAllocator::allocate(newSize + 1);
         auto it = std::uninitialized_copy(begin(), pos, newStart);
         it = std::uninitialized_copy(first, last, it);
@@ -577,8 +578,8 @@ template <class T, class Traits, class Alloc>
 typename basic_string<T, Traits, Alloc>::iterator
 basic_string<T, Traits, Alloc>::erase(const_iterator first, const_iterator last)
 {
-    const size_type prevSize = std::distance(begin(), first);
-    const size_type count = std::distance(first, last);
+    const size_type prevSize = tinystl::distance(begin(), first);
+    const size_type count = tinystl::distance(first, last);
     std::copy(last, end(), first);
     tinystl::destroy(end() - count, end() + 1);
     finish_ -= count; 
@@ -667,7 +668,7 @@ template <class T, class Traits, class Alloc>
 int basic_string<T, Traits, Alloc>::compare(size_type pos1, size_type count1,
                                             const_pointer s, size_type count2) const
 {
-    size_type count = std::min(count1, count2);
+    size_type count = tinystl::min(count1, count2);
     int compRes = traits_type::compare(c_str() + pos1, s,  count);
     if(compRes == 0)
     {
@@ -703,7 +704,7 @@ basic_string<T, Traits, Alloc>&
 basic_string<T, Traits, Alloc>::replace(const_iterator first, const_iterator last,
                                         InputIterator first2, InputIterator last2)
 {
-    const size_type prevSize = std::distance(begin(), first);
+    const size_type prevSize = tinystl::distance(begin(), first);
     erase(first, last);
     insert(begin() + prevSize, first2, last2);
 }
@@ -714,7 +715,7 @@ basic_string<T, Traits, Alloc>&
 basic_string<T, Traits, Alloc>::replace(const_iterator first, const_iterator last, 
                                         size_type count2, value_type ch)
 {
-    const size_type prevSize = std::distance(begin(), first);
+    const size_type prevSize = tinystl::distance(begin(), first);
     erase(first, last);
     insert(begin() + prevSize, count2, ch);
 }

@@ -3,6 +3,7 @@
 #include "alloc.h"
 #include "iterator.h"
 #include "vector.h"
+#include "algorithm.h"
 
 #include <memory>
 #include <algorithm>
@@ -243,9 +244,9 @@ public:
 
     void swap(Self& other)
     {
-        std::swap(header_, other.header_);
-        std::swap(tail_, other.tail_);
-        std::swap(maxLevels_, other.maxLevels_);
+        tinystl::swap(header_, other.header_);
+        tinystl::swap(tail_, other.tail_);
+        tinystl::swap(maxLevels_, other.maxLevels_);
     }
 public:
     key_compare key_comp() const { return  key_compare(); }

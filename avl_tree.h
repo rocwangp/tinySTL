@@ -3,6 +3,7 @@
 #include "alloc.h"
 #include "iterator.h"
 #include "queue.h"
+#include "algorithm.h"
 
 #include <algorithm>
 #include <utility>
@@ -57,6 +58,8 @@ public:
     typedef TreeNode<Key, Value>*           pointer;
     typedef TreeNode<Key, Value>            node_type;
     typedef TreeIterator<Key, Value>        Self;
+    typedef Key                             value_type;
+    typedef value_type&                     reference;
 
 public:
     pointer node_;
@@ -120,7 +123,7 @@ private:
         else
         {
             pointer parent = node_->parent;
-            while(parent->right == node_)
+            while(parent && parent->right == node_)
             {
                 node_ = parent;
                 parent = parent->parent;
@@ -186,8 +189,7 @@ public:
 
     ~avl_tree()
     {
-        for(iterator it = begin(); it != end(); ++it)
-            nodeAllocator::deallocate(it.node_);
+        erase(begin(), end());     
     }
 
     size_type height() const { return height(root_); }
@@ -200,7 +202,7 @@ public:
     const_iterator find_max() const { return const_iterator(maxKey(root_), root_); }
     const_iterator find(const key_type& key) const; 
 
-    iterator begin() { return iterator(minKey(root_)); }
+    iterator begin() { return iterator(minKey(root_), root_); }
     const_iterator begin() const noexcept { return iterator(minKey(root_), root_); }
     const_iterator cbegin() const  { return const_iterator(minKey(root_), root_); }
 
@@ -218,12 +220,17 @@ public:
 
     iterator erase(const key_type& key) { return iterator(eraseAux(root_, key)); }
     iterator erase(const_iterator pos) { return iterator(eraseAux(pos.node_, *pos)); }
+    iterator erase(iterator first, iterator last)
+    {
+        while(first != last)
+            erase(first++);
+        return last;
+    }
     
-    
-    void print_preorder(const std::string& delim = " ", std::ostream& os = std::cout) const;
-    void print_inorder(const std::string& delim = " ", std::ostream& os = std::cout) const;
-    void print_postorder(const std::string& delim = " ", std::ostream& os = std::cout) const;
-    void print_levelorder(const std::string& delim = " ", std::ostream& os = std::cout) const;
+    void print_preorder(const std::string& delim = " ", std::ostream& os = std::cout) const { preOrderAux(root_, delim, os); }
+    void print_inorder(const std::string& delim = " ", std::ostream& os = std::cout) const { inOrderAux(root_, delim, os); }
+    void print_postorder(const std::string& delim = " ", std::ostream& os = std::cout) const { postOrderAux(root_, delim, os); }
+    void print_levelorder(const std::string& delim = " ", std::ostream& os = std::cout) const { levelOrderAux(root_, delim, os); }
 private:
     node_pointer insertAux(node_pointer node, const key_type& key, const value_type&);
     node_pointer eraseAux(node_pointer node, const key_type& key);
@@ -272,7 +279,8 @@ private:
             else
                 parent->right = nextNode;
         }
-        nextNode->parent = parent;
+        if(nextNode)
+            nextNode->parent = parent;
         destroy(node);
         nodeAllocator::deallocate(node);
         --nodeSize_;
@@ -280,41 +288,57 @@ private:
 
     void swapNode(node_pointer lhs, node_pointer rhs)
     {
-        std::swap(lhs->left, rhs->left);
-        std::swap(lhs->right, rhs->right);
-        std::swap(lhs->parent, rhs->parent);
+        tinystl::swap(lhs->left, rhs->left);
+        tinystl::swap(lhs->right, rhs->right);
+        tinystl::swap(lhs->parent, rhs->parent);
+        if(lhs->left == lhs)
+            lhs->left = rhs;
+        if(rhs->left == rhs)
+            rhs->left = lhs;
+        if(lhs->right == lhs)
+            lhs->right = rhs;
+        if(rhs->right == rhs)
+            rhs->right = lhs;
+        if(lhs->parent == lhs)
+            lhs->parent = rhs;
+        if(rhs->parent == rhs)
+            rhs->parent = lhs;
     }
 private:
-    void enableHeightBalance(node_pointer node)
+    node_pointer enableHeightBalance(node_pointer node)
     {
         int leftH = height(node->left);
         int rightH = height(node->right);
         if(std::abs(leftH - rightH) < 2)
-            return;
+            return node;
         if(leftH > rightH)
         {
             if(node->left->left)
-                rightRotate(node);
+                node = rightRotate(node);
             else
-                leftRightRotate(node);
+                node = leftRightRotate(node);
         }
         else
         {
             if(node->right->right)
-                leftRotate(node);
+                node = leftRotate(node);
             else
-                rightLeftRotate(node);
+                node = rightLeftRotate(node);
         }
+        return node;
     }
  
     size_type height(node_pointer root) const
     {
         if(!root)   return 0;
-        size_type leftHeight = height(root->left);
-        size_type rightHeight = height(root->right);
-        return std::max(leftHeight, rightHeight) + 1;
+        if(!root->left && !root->right)
+            return tinystl::max(height(root->left), height(root->right)) + 1;
+        else if(root->left && !root->right)
+            return height(root->left) + 1;
+        else
+            return height(root->right) + 1;
     }
-    void leftRotate(node_pointer node)
+    node_pointer leftRotate(node_pointer node)
     {
         node_pointer parentNode = node->parent;
         node_pointer rightNode = node->right;
@@ -322,14 +346,18 @@ private:
         rightNode->left = node;
         node->parent = rightNode;
         node->right = rightLeftNode;
-        rightLeftNode->parent = node;
+        if(rightLeftNode)
+            rightLeftNode->parent = node;
         if(parentNode && parentNode->left == node)
             parentNode->left = rightNode;
         else if(parentNode && parentNode->right == node)
             parentNode->right = rightNode;
+        else
+            root_ = rightNode;
         rightNode->parent = parentNode;
+        return rightNode;
     }
-    void rightRotate(node_pointer node)
+    node_pointer rightRotate(node_pointer node)
     {
         node_pointer parentNode = node->parent;
         node_pointer leftNode = node->left;
@@ -337,22 +365,26 @@ private:
         leftNode->right = node;
         node->parent = leftNode;
         node->left = leftRightNode;
-        leftRightNode->parent = node;
+        if(leftRightNode)
+            leftRightNode->parent = node;
         if(parentNode && parentNode->left == node)
             parentNode->left = leftNode;
         else if(parentNode && parentNode->right == node)
             parentNode->right = leftNode;
+        else
+            root_ = leftNode;
         leftNode->parent = parentNode;
+        return leftNode;
     }
-    void leftRightRotate(node_pointer node)
+    node_pointer leftRightRotate(node_pointer node)
     {
         leftRotate(node->left);
-        rightRotate(node);
+        return rightRotate(node);
     }
-    void rightLeftRotate(node_pointer node)
+    node_pointer rightLeftRotate(node_pointer node)
     {
         rightRotate(node->right);
-        leftRotate(node);
+        return leftRotate(node);
     }
 };
 
@@ -366,6 +398,7 @@ avl_tree<Key, Value, Compare, Alloc>::insert(const key_type& key, const value_ty
     if(!root_)
     {
         root_ = createNode(key, value);
+        insertNode = root_;
     }
     else
     {
@@ -386,15 +419,19 @@ avl_tree<Key, Value, Compare, Alloc>::insertAux(node_pointer node, const key_typ
     {
         node->right = insertAux(node->right, key, value);
         if(!node->right)
+        {
             createChildNode(node, key, value, false);
+        }
     }
     else 
     {
         node->left = insertAux(node->left, key, value);
         if(!node->left)
+        {
             createChildNode(node, key, value, true);
+        }
     }
-    enableHeightBalance(node);
+    node = enableHeightBalance(node);
     return node;
 }
 
@@ -421,6 +458,8 @@ avl_tree<Key, Value, Compare, Alloc>::eraseAux(node_pointer node, const key_type
             nextNode = rightMinNode;
         }
         eraseNodeWithOneChild(node);
+        if(nextNode)
+            nextNode = enableHeightBalance(nextNode); 
     }
     else
     {
@@ -433,7 +472,6 @@ avl_tree<Key, Value, Compare, Alloc>::eraseAux(node_pointer node, const key_type
             nextNode = eraseAux(node->left, key);
         }
     }
-    enableHeightBalance(node); 
     return nextNode;
 }
 

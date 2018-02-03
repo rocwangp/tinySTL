@@ -1,8 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include "algorithm.h"
+
+
 namespace tinystl {
+
+
+
+
+
 
 struct input_iterator_tag {};
 struct output_iterator_tag {};
@@ -111,6 +117,119 @@ struct random_access_iterator{
 };
 
 
+/* 用于返回iterator_category对象，即上述五个*_iterator_tag对象 */
+template<class InputIterator>
+inline typename tinystl::iterator_traits<InputIterator>::iterator_category
+iterator_category(InputIterator) {
+    typedef typename tinystl::iterator_traits<InputIterator>::iterator_category category;
+    return category();
+}
+
+/* 用于返回differnce_type类型的初值0 */
+template <class Iterator>
+inline typename tinystl::iterator_traits<Iterator>::difference_type
+difference_type(Iterator) {
+    return static_cast<typename iterator_traits<Iterator>::difference_type>(0);
+}
+
+
+/* *************************************************************** *
+ *                           advance函数                           *
+ *                   根据模板参数推导进行函数重载                  *
+ * *************************************************************** */
+
+/* 针对input_iterator，bidirectional_iterator和random_iterator重载的三个__advance函数
+ * 根据重载判定，没有与output_iterator_tag和forward_iterator_tag完全匹配的__advance函数，
+ * 所以默认调用模板参数InputIterator类型的__advance函数，功能上完全满足要求 */ 
+namespace {
+
+    template <class InputIterator, class Distance>
+    inline void __advance(InputIterator& it, Distance n, tinystl::input_iterator_tag){
+        while(n--)
+            ++it;
+    }
+
+    template <class BidirectionalIterator, class Distance>
+    inline void __advance(BidirectionalIterator& it, Distance n, tinystl::bidirectional_iterator_tag) {
+        if(n > 0) 
+            while(n--)  ++it;
+        else
+            while(n++)  ++it;
+    }
+
+    template <class RandomAccessIterator, class Distance>
+    inline void __advance(RandomAccessIterator& it, Distance n, tinystl::random_access_iterator_tag) {
+        it += n;
+    }
+
+}
+/* advance函数接口，根据迭代器类型选择合适的__advance函数 */
+template <class InputIterator, class Distance>
+void advance(InputIterator& it, Distance n) {
+    /* __advance是函数重载，会根据第三个参数进行模板参数推导，从而选择合适的函数 */
+    __advance(it, n, iterator_category(it));
+}
+
+
+
+/* ********************************************************* *
+ *                      distance函数                         *
+ *               根据模板参数推导进行函数重载                *
+ * ********************************************************* */
+namespace {
+
+    template <class InputIterator, class Distance>
+    inline void __distance(InputIterator front, 
+                           InputIterator back, 
+                           Distance& n, 
+                           tinystl::input_iterator_tag) {
+        while(front != back) {
+            ++front;
+            ++n;
+        }
+    }
+
+    template <class RandomAccessIterator, class Distance>
+    inline void __distance(RandomAccessIterator front, 
+                           RandomAccessIterator back, 
+                           Distance& n, 
+                           tinystl::random_access_iterator_tag) {
+        n += back - front;
+    }
+
+
+
+    template <class InputIterator>
+    inline typename tinystl::iterator_traits<InputIterator>::difference_type
+    __distance(InputIterator front, InputIterator back, tinystl::input_iterator_tag) {
+        auto n = difference_type(front);
+        while(front != back) {
+            ++front;
+            ++n;
+        }
+        return n;
+    }
+
+    template <class RandomAccessIterator>
+    inline typename tinystl::iterator_traits<RandomAccessIterator>::difference_type
+    __distance(RandomAccessIterator front, RandomAccessIterator back, tinystl::random_access_iterator_tag) {
+        return back - front;
+    }
+
+}
+/* 将结果保存在引用参数n中 */
+template <class InputIterator, class Distance>
+void distance(InputIterator front, InputIterator back, Distance& n) {
+    __distance(front, back, n, iterator_category(front));
+}
+
+/* 将结果返回 */
+template <class InputIterator>
+inline typename tinystl::iterator_traits<InputIterator>::difference_type
+distance(InputIterator front, InputIterator back) {
+    return __distance(front, back, iterator_category(front));
+}
+
 
 template <class Iterator>
 class reverse_iterator 
@@ -192,7 +311,7 @@ public:
 
     Self& operator+=(difference_type n)
     {
-        std::advance(current_, -n);
+        tinystl::advance(current_, -n);
         return *this;
     }
 
@@ -269,124 +388,8 @@ operator+(typename reverse_iterator<Iterator>::difference_type n,
 template <class Iterator1, class Iterator2>
 auto operator-(const reverse_iterator<Iterator1>& lhs,
                const reverse_iterator<Iterator2>& rhs)
-    -> decltype(rhs.base() - lhs.base())
 {
     return rhs.base() - lhs.base();
-}
-
-
-
-/* 用于返回iterator_category对象，即上述五个*_iterator_tag对象 */
-template<class InputIterator>
-inline typename iterator_traits<InputIterator>::iterator_category
-iterator_category(InputIterator) {
-    typedef typename iterator_traits<InputIterator>::iterator_category category;
-    return category();
-}
-
-/* 用于返回differnce_type类型的初值0 */
-template <class Iterator>
-inline typename iterator_traits<Iterator>::difference_type
-distance_type(Iterator) {
-    return static_cast<typename iterator_traits<Iterator>::difference_type>(0);
-}
-
-
-/* *************************************************************** *
- *                           advance函数                           *
- *                   根据模板参数推导进行函数重载                  *
- * *************************************************************** */
-
-/* 针对input_iterator，bidirectional_iterator和random_iterator重载的三个__advance函数
- * 根据重载判定，没有与output_iterator_tag和forward_iterator_tag完全匹配的__advance函数，
- * 所以默认调用模板参数InputIterator类型的__advance函数，功能上完全满足要求 */ 
-namespace {
-
-    template <class InputIterator, class Distance>
-    inline void __advance(InputIterator& it, Distance n, tinystl::input_iterator_tag){
-        while(n--)
-            ++it;
-    }
-
-    template <class BidirectionalIterator, class Distance>
-    inline void __advance(BidirectionalIterator& it, Distance n, tinystl::bidirectional_iterator_tag) {
-        if(n > 0) 
-            while(n--)  ++it;
-        else
-            while(n++)  ++it;
-    }
-
-    template <class RandomAccessIterator, class Distance>
-    inline void __advance(RandomAccessIterator& it, Distance n, tinystl::random_access_iterator_tag) {
-        it += n;
-    }
-
-}
-/* advance函数接口，根据迭代器类型选择合适的__advance函数 */
-template <class InputIterator, class Distance>
-void advance(InputIterator& it, Distance n) {
-    /* __advance是函数重载，会根据第三个参数进行模板参数推导，从而选择合适的函数 */
-    __advance(it, n, iterator_category(it));
-}
-
-
-
-/* ********************************************************* *
- *                      distance函数                         *
- *               根据模板参数推导进行函数重载                *
- * ********************************************************* */
-namespace {
-
-    template <class InputIterator, class Distance>
-    inline void __distance(InputIterator front, 
-                           InputIterator back, 
-                           Distance& n, 
-                           tinystl::input_iterator_tag) {
-        while(front != back) {
-            ++front;
-            ++n;
-        }
-    }
-
-    template <class RandomAccessIterator, class Distance>
-    inline void __distance(RandomAccessIterator front, 
-                           RandomAccessIterator back, 
-                           Distance& n, 
-                           tinystl::random_access_iterator_tag) {
-        n += back - front;
-    }
-
-
-
-    template <class InputIterator>
-    inline typename iterator_traits<InputIterator>::difference_type
-    __distance(InputIterator front, InputIterator back, tinystl::input_iterator_tag) {
-        typename iterator_traits<InputIterator>::difference_type n = distance_type(front);
-        while(front != back) {
-            ++front;
-            ++n;
-        }
-        return n;
-    }
-
-    template <class RandomAccessIterator>
-    inline typename iterator_traits<RandomAccessIterator>::difference_type
-    __distance(RandomAccessIterator front, RandomAccessIterator back, tinystl::random_access_iterator_tag) {
-        return back - front;
-    }
-
-}
-/* 将结果保存在引用参数n中 */
-template <class InputIterator, class Distance>
-void distance(InputIterator front, InputIterator back, Distance& n) {
-    __distance(front, back, n, iterator_category(front));
-}
-
-/* 将结果返回 */
-template <class InputIterator>
-inline typename iterator_traits<InputIterator>::difference_type
-distance(InputIterator front, InputIterator back) {
-    return __distance(front, back, iterator_category(front));
 }
 
 

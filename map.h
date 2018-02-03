@@ -1,6 +1,8 @@
 #pragma once
 
 #include "skiplist.h"
+#include "algorithm.h"
+
 
 namespace tinystl
 {

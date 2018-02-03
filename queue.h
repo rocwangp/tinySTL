@@ -2,6 +2,7 @@
 
 #include "deque.h"
 
+#include "algorithm.h"
 namespace tinystl
 {
 

@@ -3,6 +3,7 @@
 #include "iterator.h"
 #include "alloc.h"
 #include "construct.h"
+#include "algorithm.h"
 
 #include <memory>
 #include <iostream>
@@ -185,12 +186,12 @@ public:
     deque& operator=(std::initializer_list<T> ilist);
 
     void assign(size_type count, const value_type& value)
-    { std::swap(deque(count, value), *this); }
+    { tinystl::swap(deque(count, value), *this); }
     template <class InputIterator>
         void assign(InputIterator first, InputIterator last)
-        { ; std::swap(deque(first, last), *this); }
+        { ; tinystl::swap(deque(first, last), *this); }
     void assign(std::initializer_list<T> ilist)
-    { std::swap(deque(ilist), *this); }
+    { tinystl::swap(deque(ilist), *this); }
 
     reference at(size_type pos); 
     const_reference at(size_type pos) const; 
@@ -300,7 +301,7 @@ template <class T, class Alloc, size_t BufSize>
 void deque<T, Alloc, BufSize>::createMap(size_type count)
 {
     size_type mapNodeSize = count / bufferSize() + 1;
-    mapSize_ = std::max(initializeSize(),  mapNodeSize + 2);
+    mapSize_ = tinystl::max(initializeSize(),  mapNodeSize + 2);
     map_ = mapAllocator::allocate(mapSize_);
     map_pointer mapStart = map_ + (mapSize_ - mapNodeSize) / 2;
     map_pointer mapEnd = mapStart + mapNodeSize - 1;
@@ -380,7 +381,7 @@ deque<T, Alloc, BufSize>::operator=(const deque& other)
 {
     if(&other != this)
     {
-        std::swap(deque(other), *this);
+        tinystl::swap(deque(other), *this);
     }
     return *this;
 }
@@ -392,7 +393,7 @@ deque<T, Alloc, BufSize>::operator=(deque&& other) noexcept
 {
     if(&other != this)
     {
-        std::swap(deque(std::move(other)), *this);
+        tinystl::swap(deque(std::move(other)), *this);
     }
     return *this;
 }
@@ -402,7 +403,7 @@ template <class T, class Alloc, size_t BufSize>
 deque<T, Alloc, BufSize>&
 deque<T, Alloc, BufSize>::operator=(std::initializer_list<T> ilist)
 {
-    std::swap(deque(ilist), *this);
+    tinystl::swap(deque(ilist), *this);
     return *this;
 }
 
@@ -537,7 +538,7 @@ template <class T, class Alloc, size_t BufSize>
 void deque<T, Alloc, BufSize>::reallocate_map(size_type addCount)
 {
     size_type oldMapSize = finish_.map_ - start_.map_ + 1;
-    size_type newMapSize = mapSize_ + std::max(mapSize_, addCount) + 2;
+    size_type newMapSize = mapSize_ + tinystl::max(mapSize_, addCount) + 2;
     map_pointer newMap = mapAllocator::allocate(newMapSize);
     map_pointer newStart = newMap + (newMapSize - (oldMapSize + addCount)) / 2;
     map_pointer newFinish = newStart + oldMapSize + addCount - 1;
@@ -622,10 +623,10 @@ void deque<T, Alloc, BufSize>::resize(size_type count, const value_type& value)
 template <class T, class Alloc, size_t BufSize>
 void deque<T, Alloc, BufSize>::swap(deque& other) noexcept
 {
-    std::swap(start_, other.start_);
-    std::swap(finish_, other.finish_);
-    std::swap(map_, other.map_);
-    std::swap(mapSize_, other.mapSize_);
+    tinystl::swap(start_, other.start_);
+    tinystl::swap(finish_, other.finish_);
+    tinystl::swap(map_, other.map_);
+    tinystl::swap(mapSize_, other.mapSize_);
 }
 
 

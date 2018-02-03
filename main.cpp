@@ -2,7 +2,7 @@
 
 /* #include "Profiler\Profiler.h" */
 
-/* #include "Test\AlgorithmTest.h" */
+#include "Test/AlgorithmTest.h"
 /* #include "Test\AVLTreeTest.h" */
 /* #include "Test\BitmapTest.h" */
 /* #include "Test\BinarySearchTreeTest.h" */
@@ -15,7 +15,8 @@
 #include "Test/PriorityQueueTest.h"
 #include "Test/QueueTest.h"
 /* #include "Test\RefTest.h" */
-/* #include "Test\SharedPtrTest.h" */
+#include "Test/SharedPtrTest.h"
+#include "Test/UniquePtrTest.h"
 #include "Test/StackTest.h"
 #include "Test/StringTest.h"
 /* #include "Test\SuffixArrayTest.h" */
@@ -25,7 +26,6 @@
 /* #include "Test\UniquePtrTest.h" */
 #include "Test/UnorderedSetTest.h"
 #include "Test/VectorTest.h"
-#include "Test/RBTreeTest.h"
 #include "Test/SkipListTest.h"
 #include "Test/SetTest.h"
 #include "Test/MapTest.h"
@@ -33,7 +33,7 @@
 /* using namespace tinystl::Profiler; */
 
 int main(){
-	/* tinystl::AlgorithmTest::testAllCases(); */
+	tinystl::AlgorithmTest::testAllCases();
 	/* tinystl::AVLTreeTest::testAllCases(); */
 	/* tinystl::BitmapTest::testAllCases(); */
 	/* tinystl::BinarySearchTreeTest::testAllCases(); */
@@ -48,7 +48,8 @@ int main(){
 	tinystl::PriorityQueueTest::testAllCases();
 	tinystl::QueueTest::testAllCases();
 	/* tinystl::RefTest::testAllCases(); */
-	/* tinystl::SharedPtrTest::testAllCases(); */
+	tinystl::SharedPtrTest::testAllCases();
+    tinystl::UniquePtrTest::testAllCases();
 	tinystl::StringTest::testAllCases();
 	/* tinystl::SuffixArrayTest::testAllCases(); */
 	/* tinystl::TrieTreeTest::testAllCases(); */

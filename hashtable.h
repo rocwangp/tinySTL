@@ -4,8 +4,9 @@
 #include "iterator.h"
 #include "vector.h"
 #include "list.h"
+#include "algorithm.h"
 
-#include <algorithm>
+
 
 namespace tinystl
 {
@@ -14,7 +15,7 @@ template <class T>
 class HashTableIterator
 {
 public:
-    typedef std::forward_iterator_tag        iterator_category;
+    typedef forward_iterator_tag        iterator_category;
     typedef T                           value_type;
     typedef value_type&                 reference;
     typedef const value_type&           const_reference;
@@ -66,8 +67,8 @@ public:
 
     void swap(Self& other)
     {
-        std::swap(bucketIdx, other.bucketIdx);
-        std::swap(listIt, other.listIt);
+        tinystl::swap(bucketIdx, other.bucketIdx);
+        tinystl::swap(listIt, other.listIt);
         bucket.swap(other.bucket);
     }
     reference operator*()
@@ -230,13 +231,13 @@ public:
 
     void swap(Self& other)
     {
-        std::swap(bucket_, other.bucket_);
-        std::swap(bucketSize_, other.bucketSize_);
-        std::swap(factor_, other.factor_);
-        std::swap(entryIdx_, other.entryIdx_);
-        std::swap(dataSize_, other.dataSize_);
-        std::swap(hash_, other.hash_);
-        std::swap(equal_, other.equal_);
+        tinystl::swap(bucket_, other.bucket_);
+        tinystl::swap(bucketSize_, other.bucketSize_);
+        tinystl::swap(factor_, other.factor_);
+        tinystl::swap(entryIdx_, other.entryIdx_);
+        tinystl::swap(dataSize_, other.dataSize_);
+        tinystl::swap(hash_, other.hash_);
+        tinystl::swap(equal_, other.equal_);
     }
 public:
     local_iterator begin(size_type n) { return bucket_[n].begin(); }
@@ -265,7 +266,7 @@ public:
 private:
     void updateEntryForInsert(size_type idx)
     {
-        entryIdx_ = std::min(entryIdx_, idx);
+        entryIdx_ = tinystl::min(entryIdx_, idx);
     }
     void updateEntryForErase(size_type idx)
     {
@@ -338,7 +339,7 @@ typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::iterator
 HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::find(const key_type& key)
 {
     size_type idx = hash_(key) % bucketSize_;
-    auto it = std::find_if(bucket_[idx].begin(), bucket_[idx].end(), [&key](const value_type& value){
+    auto it = tinystl::find_if(bucket_[idx].begin(), bucket_[idx].end(), [&key](const value_type& value){
                             return KeyEqual()(key, KeyOfValue()(value));
                         });
     if(it != bucket_[idx].end())
@@ -359,7 +360,7 @@ typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::size_type
 HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::count(const key_type& key) const
 {
     size_type idx = hash_(key) % bucketSize_;
-    return std::count_if(bucket_[idx].begin(), bucket_[idx].end(), 
+    return tinystl::count_if(bucket_[idx].begin(), bucket_[idx].end(), 
                          [&key](const value_type& value){
                             return KeyEqual()(key, KeyOfValue()(value));
                          });
@@ -388,7 +389,7 @@ void HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::rehash(size_type 
         size_type idx = hash_(KeyOfValue()(*it)) % count;
         newBucket[idx].push_front(*it);
     }
-    std::swap(bucket_, newBucket);
+    tinystl::swap(bucket_, newBucket);
     bucketSize_ = count;
 }
 

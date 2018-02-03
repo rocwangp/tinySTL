@@ -7,6 +7,7 @@
 #include <cstdint>
 #include "alloc.h"
 #include "iterator.h"
+#include "algorithm.h"
 
 namespace tinystl{
 
@@ -96,12 +97,12 @@ public:
 
     /* Capacity */
     bool empty() const noexcept { return begin() == end(); }
-    size_type size() const noexcept { return static_cast<size_type>(std::distance(begin(), end())); }
+    size_type size() const noexcept { return static_cast<size_type>(tinystl::distance(begin(), end())); }
     size_type max_size() const noexcept { return size(); }
 
 
     void reserve(size_type new_cap);
-    size_type capacity() const noexcept{ return static_cast<size_type>(std::distance(start_, end_)); }
+    size_type capacity() const noexcept{ return static_cast<size_type>(tinystl::distance(start_, end_)); }
 
     void shrink_to_fit();
 
@@ -229,7 +230,7 @@ vector<T, Alloc>::operator=(const vector& other)
 {
     if(&other != this)
     {
-        std::swap(vector(other), *this);
+        tinystl::swap(vector(other), *this);
     }
     return *this;
 }
@@ -245,7 +246,7 @@ vector<T, Alloc>::operator=(vector&& other) noexcept
     if(&other != this)
     {
         vector tmp(std::move(other));
-        std::swap(tmp, *this);
+        tinystl::swap(tmp, *this);
     }
     return *this;
 }
@@ -258,7 +259,7 @@ vector<T, Alloc>&
 vector<T, Alloc>::operator=(std::initializer_list<T> ilist) 
 {
     vector tmp(ilist);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
     return *this;
 }
 
@@ -267,7 +268,7 @@ template <class T, class Alloc>
 void vector<T, Alloc>::assign(size_type count, const value_type& value)
 {
     vector tmp(count, value);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 template <class T, class Alloc>
@@ -275,14 +276,14 @@ template <class InputIterator>
 void vector<T, Alloc>::assign(InputIterator first, InputIterator last)
 {
     vector tmp(first, last);
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 template <class T, class Alloc>
 void vector<T, Alloc>::assign(std::initializer_list<T> ilist)
 {
     vector tmp(ilist.begin(), ilist.end());
-    std::swap(tmp, *this);
+    tinystl::swap(tmp, *this);
 }
 
 
@@ -366,7 +367,7 @@ template <class T, class Alloc>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& value, std::true_type)
 {
-    const size_type prevSize = std::distance(begin(), pos); 
+    const size_type prevSize = tinystl::distance(begin(), pos); 
     if(count != 0) 
     {
         if(static_cast<size_type>(end_ - finish_) >= count) 
@@ -388,7 +389,7 @@ vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& val
         else 
         {
             const size_type oldSize = size();
-            const size_type newSize = oldSize + std::max(oldSize, count);
+            const size_type newSize = oldSize + tinystl::max(oldSize, count);
             iterator start = dataAllocator::allocate(newSize);
             iterator it = std::uninitialized_copy(begin(), pos, start);
             it = std::uninitialized_fill_n(it, count, value);
@@ -408,7 +409,7 @@ template <class InputIterator>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::insertAux(iterator pos, InputIterator first, InputIterator last, std::false_type)
 {
-    const size_type prevSize = std::distance(begin(), pos); 
+    const size_type prevSize = tinystl::distance(begin(), pos); 
     const size_type count = last - first; 
     if(static_cast<size_type>(end_ - finish_) >= count)
     {
@@ -428,7 +429,7 @@ vector<T, Alloc>::insertAux(iterator pos, InputIterator first, InputIterator las
     else
     {
         const size_type oldSize = size();
-        const size_type newSize = oldSize + std::max(oldSize, count);
+        const size_type newSize = oldSize + tinystl::max(oldSize, count);
         iterator start = dataAllocator::allocate(newSize);
         iterator it = std::uninitialized_copy(begin(), pos, start);
         it = std::uninitialized_copy(first, last, it);
@@ -456,7 +457,7 @@ vector<T, Alloc>::erase(iterator first, iterator last)
     const auto eraseSize = last - first;
     const auto lastSize = end() - last;
     const auto prevSize = first - begin();
-    const auto uninitCopySize = std::min(eraseSize, lastSize);
+    const auto uninitCopySize = tinystl::min(eraseSize, lastSize);
     destroy(first, last);
     iterator it = std::uninitialized_copy(last, last + uninitCopySize, first);
     std::copy(last + uninitCopySize, end(), it);
@@ -497,9 +498,9 @@ void vector<T, Alloc>::resize(size_type count, const T& value)
 template <class T, class Alloc>
 void vector<T, Alloc>::swap(vector& other) noexcept
 {
-    std::swap(start_, other.start_);
-    std::swap(finish_, other.finish_);
-    std::swap(end_, other.end_);
+    tinystl::swap(start_, other.start_);
+    tinystl::swap(finish_, other.finish_);
+    tinystl::swap(end_, other.end_);
 }
 
 

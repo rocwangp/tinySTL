@@ -5,6 +5,7 @@
 #include "queue.h"
 #include "vector.h"
 #include "string.h"
+#include "algorithm.h"
 
 #include <cstdint>
 #include <utility>
@@ -361,17 +362,17 @@ private:
         /*     node2->parent = parent1; */
         /*     node1->parent = parent2; */
         /* } */
-        std::swap(node1->parent, node2->parent);
+        tinystl::swap(node1->parent, node2->parent);
         if(node1->parent == node1)
             node1->parent = node2;
         if(node2->parent == node2)
             node2->parent = node1;
-        std::swap(node1->left, node2->left);
+        tinystl::swap(node1->left, node2->left);
         if(node1->left == node1)
             node1->left = node2;
         if(node2->left == node2)
             node2->left = node1;
-        std::swap(node1->right, node2->right);
+        tinystl::swap(node1->right, node2->right);
         if(node1->right == node1)
             node1->right = node2;
         if(node2->right == node2)
@@ -401,7 +402,7 @@ private:
         if(node2->right)
             node2->right->parent = node2;
 
-        std::swap(node1->color, node2->color);
+        tinystl::swap(node1->color, node2->color);
         /* print_levelOrder(); */
     }
     void eraseNodeWithOneChildAux(node_pointer node)
