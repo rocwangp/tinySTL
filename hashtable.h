@@ -277,6 +277,11 @@ private:
                 ++entryIdx_;
         }
     }
+    void rehashIfNeeded()
+    {
+        if(load_factor() >= max_load_factor())
+            rehash(bucket_count() * 5);
+    }
 
 };
 template <class Key, class Value, class KeyOfValue, class Hash, class KeyEqual, class Alloc>
@@ -290,6 +295,7 @@ HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::insert(const value_typ
         bucket_[idx].push_front(value);
         ++dataSize_;
         updateEntryForInsert(idx);
+        rehashIfNeeded();
         return iterator(idx, bucket_, bucket_[idx].begin());
     }
     else

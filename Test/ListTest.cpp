@@ -153,7 +153,7 @@ namespace tinystl{
 			std::random_device rd;
 			stdL<int> l1;
 			tsL<int> l2;
-			for (auto i = 0; i != 100; ++i){
+			for (auto i = 0; i != 1000000; ++i){
 				auto ret = rd() % 65536;
 				l1.push_back(ret);
 				l2.push_back(ret);

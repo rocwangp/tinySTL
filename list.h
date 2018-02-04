@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vector.h"
 #include "iterator.h"
 #include "alloc.h"
 #include "construct.h"
@@ -199,6 +200,8 @@ public:
     void sort();
     template <class Compare>
         void sort(Compare compare);
+    template <class Compare>
+        void sort(iterator first, iterator last, Compare comp);
 
 private:
     void ctorAux(size_type count, const value_type& value, std::true_type);
@@ -702,7 +705,65 @@ void list<T, Alloc>::unique(BinaryPredicate p)
 template <class T, class Alloc>
 void list<T, Alloc>::sort()
 {
-    sort([](const value_type& lhs, const value_type& rhs) { return lhs < rhs; });
+    /* sort([](const value_type& lhs, const value_type& rhs) { return lhs < rhs; }); */
+    sort(begin(), end(), [](const auto& lhs, const auto& rhs) { return lhs < rhs; });
+}
+
+template <class T, class Alloc>
+template <class Compare>
+void list<T, Alloc>::sort(iterator first, iterator last, Compare comp)
+{
+    if(first == last)
+        return;
+    auto count = tinystl::distance(first, last); 
+    if(count <= 10)
+    {
+        iterator cur = first;
+        while(cur != last)
+        {
+            auto value = *cur;
+            iterator prev = --cur;
+            ++cur;
+            iterator next = ++cur;
+            --cur;
+            while(cur != first && comp(value, *prev))
+            {
+                *cur = *prev;
+                --cur;
+                --prev;
+            }
+            *cur = value;
+            cur = next;
+        }
+        return;
+    }
+    auto f = first;
+    auto l = last;
+    auto middle = first;
+    --last;
+    tinystl::advance(middle, count / 2);
+    if(!comp(*first, *middle))
+        tinystl::swap(*first, *middle);
+    if(!comp(*first, *last))
+        tinystl::swap(*first, *last);
+    if(!comp(*middle, *last))
+        tinystl::swap(*middle, *last);
+    tinystl::swap(*first, *middle);
+    auto pivot = *first;
+    while(first != last)
+    {
+        while(first != last && !comp(*last, pivot))
+            --last;
+        if(first != last)
+            tinystl::swap(*first++, *last);
+        while(first != last && comp(*first, pivot))
+            ++first;
+        if(first != last)
+            tinystl::swap(*first, *last--);
+    }
+    *first = pivot;
+    sort(f, first, comp);
+    sort(++first, l, comp);
 }
 
 /* 链表的归并排序 */
