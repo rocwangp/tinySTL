@@ -70,6 +70,8 @@
 
 >测试环境：操作系统ubuntu，编译器gcc 5.4.0，编辑器vim
 
+### vector\<int\>::push_back
+
 
 ```c
 //std::vector<int> vec;
@@ -90,7 +92,9 @@ ProfilerInstance::dumpDuringTime();
 |   std::vector<int>   | push_back |    100万     |    12    |
 |   std::vector<int>   | push_back |    1000万    |    72    |
 
+------
 
+### vector\<string\>::push_back
 
 ```c
 //std::vector<std::string> vec;
@@ -112,7 +116,9 @@ ProfilerInstance::dumpDuringTime();
 | tinystl::vector\<std::stirng\> | push_back |    100万     |    47    |
 | tinystl::vector\<std::stirng\> | push_back |    1000万    |   400    |
 
+------
 
+### string::push_back
 
 ```c
 //std::string str;
@@ -133,7 +139,13 @@ ProfilerInstance::dumpDuringTime();
 |   std::string   | push_back |    1000万    |    40    |
 |   std::string   | push_back |   10000万    |   260    |
 
+------
 
+### unordered_set\<int\>::insert
+
+>unordered_set使用hashtable加开链法实现的，初始桶大小是128。在不考虑适时rehash的情况下插入大量元素会很慢，于是在每次insert之后都判断当前的负载因子，如果达到负载因子的上限，就扩大hashtable的桶大小，默认是原大小的5倍。
+>
+>另外页可以考虑将rehash的时间消耗分摊到每次的insert中，参数redis
 
 ```c
 //std::unordered_set<int> ust;
@@ -145,10 +157,6 @@ ProfilerInstance::finish();
 ProfilerInstance::dumpDuringTime();
 ```
 
-> unordered_set使用hashtable加开链法实现的，初始桶大小是128。在不考虑适时rehash的情况下插入大量元素会很慢，于是在每次insert之后都判断当前的负载因子，如果达到负载因子的上限，就扩大hashtable的桶大小，默认是原大小的5倍。
->
-> 另外页可以考虑将rehash的时间消耗分摊到每次的insert中，参数redis
-
 |           container           | operation | quantity(次) | time(ms) |
 | :---------------------------: | :-------: | :---------: | :------: |
 | tinystl::unordered_set\<int\> |  insert   |     1万      |    3     |
@@ -158,7 +166,9 @@ ProfilerInstance::dumpDuringTime();
 |   std::unordered_set\<int\>   |  insert   |     10万     |    15    |
 |   std::unordered_set\<int\>   |  insert   |    100万     |    77    |
 
+------
 
+### unordered_set<int>::count
 
 ```c
 //std::unordered_set<int> ust;
@@ -183,7 +193,9 @@ ProfilerInstance::dumpDuringTime();
 |   std::unordered_set\<int\>   |   count   |     1亿      |   1415   |
 |   std::unordered_set\<int\>   |   count   |     10亿     |  15616   |
 
+------
 
+### priority_queue\<int\>::push
 
 ```c
 //std::priority_queue<int> pq;
@@ -204,7 +216,9 @@ ProfilerInstance::dumpDuringTime();
 |   std::priority_queue\<int\>   |   push    |    100万     |    34    |
 |   std::priority_queue\<int\>   |   push    |    1000万    |   283    |
 
+------
 
+### priority_queue\<int\>::pop
 
 ```c
 tinystl::vector<int> v;
@@ -213,8 +227,8 @@ for(int i = 0; i != count; ++i)
 //std::priority_queue<int> pq(v.begin(), v.end());
 tinystl::priority_queue<int> pq(v.begin(), v.end()); 
 ProfilerInstance::start();
-	for(int i = 0; i != count; ++i)
-pq.pop();
+for(int i = 0; i != count; ++i)
+	pq.pop();
 ProfilerInstance::finish();
 ProfilerInstance::dumpDuringTime();
 ```
@@ -229,7 +243,9 @@ ProfilerInstance::dumpDuringTime();
 |   std::priority_queue\<int\>   |    pop    |    100万     |    72    |
 |   std::priority_queue\<int\>   |    pop    |    1000万    |   836    |
 
+------
 
+### deque\<int\>::push_front/back
 
 ```c
 //std::deque<int> dq;
@@ -253,7 +269,9 @@ ProfilerInstance::dumpDuringTime();
 |   std::deque\<int\>   | push_front/back |    100万     |    10    |
 |   std::deque\<int\>   | push_front/back |    1000万    |    40    |
 
+------
 
+### list\<int\>::push_back
 
 ```c
 //std::list<int> l;
@@ -274,7 +292,11 @@ ProfilerInstance::dumpDuringTime();
 |   std::list\<int\>   | push_back |    100万     |    36    |
 |   std::list\<int\>   | push_back |    1000万    |   280    |
 
+------
 
+### list\<int\>::sort
+
+>tinystl::list中的sort最初采用归并排序，但是效率过低，于是改为快排，发现效率仍然不高。最后对快排进行优化，仅采用了插入排序优化和三数取中两种优化方法。由于是双向链表，快排比较好实现，对于单链表的快排还有待学习
 
 ```c
 tinystl::list<int> list1;
@@ -304,8 +326,6 @@ std::cout << "tinystl::list<int>::sort time: " << cost1  << "ms" << std::endl;
 std::cout << "std::list<int>::sort time: " << cost2  << "ms" << std::endl;
 ```
 
-> tinystl::list中的sort最初采用归并排序，但是效率过低，于是改为快排，发现效率仍然不高。最后对快排进行优化，仅采用了插入排序优化和三数取中两种优化方法。由于是双向链表，快排比较好实现，对于单链表的快排还有待学习
-
 |      container       | operation | 数量(个) | quantity(次) | time(ms) |
 | :------------------: | :-------: | :---: | :---------: | :------: |
 | tinystl::list\<int\> |   sort    |  1万   |    100万     |    60    |
@@ -315,7 +335,11 @@ std::cout << "std::list<int>::sort time: " << cost2  << "ms" << std::endl;
 |   std::list\<int\>   |   sort    |  10万  |     100     |   1240   |
 |   std::list\<int\>   |   sort    | 100万  |     100     |  34830   |
 
+------
 
+### algorithm::sort
+
+> tinystl::algorithm中的sort采用快速排序实现，优化方法有较少元素时采用插入排序，三数去中，将与枢纽pivot相等的值移动到两边
 
 ```c
 std::random_device rd;
@@ -327,8 +351,6 @@ tinystl::sort(v.begin(), v.end());
 ProfilerInstance::finish();
 ProfilerInstance::dumpDuringTime();
 ```
-
->tinystl::algorithm中的sort采用快速排序实现，优化方法有较少元素时采用插入排序，三数去中，将与枢纽pivot相等的值移动到两边
 
 
 |     container      | operation | quantity(次) | time(ms) |
