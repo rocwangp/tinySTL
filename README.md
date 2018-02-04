@@ -145,6 +145,10 @@ ProfilerInstance::finish();
 ProfilerInstance::dumpDuringTime();
 ```
 
+> unordered_set使用hashtable加开链法实现的，初始桶大小是128。在不考虑适时rehash的情况下插入大量元素会很慢，于是在每次insert之后都判断当前的负载因子，如果达到负载因子的上限，就扩大hashtable的桶大小，默认是原大小的5倍。
+>
+> 另外页可以考虑将rehash的时间消耗分摊到每次的insert中，参数redis
+
 |           container           | operation | quantity(次) | time(ms) |
 | :---------------------------: | :-------: | :---------: | :------: |
 | tinystl::unordered_set\<int\> |  insert   |     1万      |    3     |
@@ -163,11 +167,12 @@ int insertCnt = std::max(10000, count / 10000);
 for(int i = 0; i != insertCnt; ++i)
 	ust.insert(i);
 ProfilerInstance::start();
-	for(int i = 0; i != count; ++i)
-ust.count(i);
+for(int i = 0; i != count; ++i)
+	ust.count(i);
 ProfilerInstance::finish();
 ProfilerInstance::dumpDuringTime();
 ```
+
 
 |           container           | operation | quantity(次) | time(ms) |
 | :---------------------------: | :-------: | :---------: | :------: |
@@ -299,6 +304,8 @@ std::cout << "tinystl::list<int>::sort time: " << cost1  << "ms" << std::endl;
 std::cout << "std::list<int>::sort time: " << cost2  << "ms" << std::endl;
 ```
 
+> tinystl::list中的sort最初采用归并排序，但是效率过低，于是改为快排，发现效率仍然不高。最后对快排进行优化，仅采用了插入排序优化和三数取中两种优化方法。由于是双向链表，快排比较好实现，对于单链表的快排还有待学习
+
 |      container       | operation | 数量(个) | quantity(次) | time(ms) |
 | :------------------: | :-------: | :---: | :---------: | :------: |
 | tinystl::list\<int\> |   sort    |  1万   |    100万     |    60    |
@@ -320,6 +327,9 @@ tinystl::sort(v.begin(), v.end());
 ProfilerInstance::finish();
 ProfilerInstance::dumpDuringTime();
 ```
+
+>tinystl::algorithm中的sort采用快速排序实现，优化方法有较少元素时采用插入排序，三数去中，将与枢纽pivot相等的值移动到两边
+
 
 |     container      | operation | quantity(次) | time(ms) |
 | :----------------: | :-------: | :---------: | :------: |
