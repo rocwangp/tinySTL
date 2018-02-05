@@ -4,6 +4,18 @@
 namespace tinystl{
 	namespace UnorderedSetTest{
 	
+        template <class Container>
+        void print(Container& cont)
+        {
+			std::vector<typename Container::value_type> vec1;
+			for (auto& item : cont){
+				vec1.push_back(item);
+			}
+			std::sort(vec1.begin(), vec1.end());
+            for(auto& item : vec1)
+                std::cout << item << " ";
+            std::cout << std::endl;
+        }
 		template<class Container1, class Container2>
 		bool container_equal(Container1& con1, Container2& con2){
 			std::vector<typename Container1::value_type> vec1, vec2;
@@ -49,10 +61,13 @@ namespace tinystl{
 			tsUst<std::string> ust1(10);
 			stdUst<std::string> ust2(10);
 			std::random_device rd;
-			for (auto i = 0; i != 100; ++i){
+			for (auto i = 0; i != 1000; ++i){
 				auto n = std::to_string(rd() % 65536);
 				ust1.insert(n);
 				ust2.insert(n);
+                /* std::cout << i << " " << ust1.load_factor() << " " << ust1.max_load_factor() << std::endl; */
+                /* print(ust1); */
+                /* print(ust2); */
 			}
 			assert(container_equal(ust1, ust2));
 

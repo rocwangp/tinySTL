@@ -352,7 +352,7 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::insertAux(const value_type& va
        cur->levels[0].next != tail_ && 
        !comp_(KeyOfValue()(cur->levels[0].next->value), KeyOfValue()(value)) && 
        !comp_(KeyOfValue()(value),  KeyOfValue()(cur->levels[0].next->value)))
-        return iterator(nullptr);
+        return end(); 
     
     size_type level = randomLevel();
     node_pointer newNode = constructNode(value, level);
@@ -396,6 +396,11 @@ SkipList<Key, Value, KeyOfValue, Compare, Alloc>::erase(const value_type& value)
     {
         eraseNode->levels[0].next->parent = eraseNode->parent;
         destroyNode(eraseNode);
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }
 

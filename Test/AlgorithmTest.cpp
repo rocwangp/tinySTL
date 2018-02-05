@@ -204,13 +204,23 @@ namespace tinystl{
 			tinystl::sort(std::begin(arr3), std::end(arr3));
 			assert(std::is_sorted(std::begin(arr3), std::end(arr3)));
 
-			int arr4[20];
+			int arr4[100];  
+            int arr5[100];
+            int arr6[100];
 			std::random_device rd;
 			for (auto i = 0; i != 10; ++i){
-				for (auto& n : arr4){
-					n = rd() % 65536;
-				}
+                for(int j = 0; j != 100; ++j)
+                {
+                    arr4[j] = arr5[j] = arr6[j] = rd() % 65536;
+                }
 				tinystl::sort(std::begin(arr4), std::end(arr4));
+                /* std::sort(std::begin(arr5), std::end(arr5)); */
+                if(!std::is_sorted(std::begin(arr4), std::end(arr4)))
+                {
+                    /* tinystl::Test::print(arr6); */
+                    tinystl::Test::print(arr4);
+                    /* tinystl::Test::print(arr5); */
+                }
 				assert(std::is_sorted(std::begin(arr4), std::end(arr4)));
 			}
 		}
@@ -289,4 +299,3 @@ namespace tinystl{
 		}
 	}
 }
-

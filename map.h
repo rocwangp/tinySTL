@@ -95,13 +95,13 @@ public:
 
     void clear() noexcept { cont_.clear(); }
 
-    std::pair<iterator, bool> insert(const value_type& value)
+    tinystl::pair<iterator, bool> insert(const value_type& value)
     {
         iterator it = cont_.insert_unique(value);
         if(it != end())
-            return std::make_pair(it, true);
+            return tinystl::make_pair(it, true);
         else
-            return std::make_pair(it, false);
+            return tinystl::make_pair(it, false);
     }
 
     template <class InputIterator>

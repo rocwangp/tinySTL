@@ -413,8 +413,20 @@ void sort(RandomIt first, RandomIt last, Compare comp = Compare())
             tinystl::swap(*first, *last--);
     }
     *first = pivot;
-    tinystl::sort(f + leftEqualCnt, first);
-    tinystl::sort(first + 1, l - rightEqualCnt);
+    --first;
+    ++last;
+    for(int i = 0; i < leftEqualCnt; ++i)
+    {
+        tinystl::swap(*first, *(f + i));
+        --first;
+    }
+    for(int i = 0; i < rightEqualCnt; ++i)
+    {
+        tinystl::swap(*last, *(l - i - 1));
+        ++last;
+    }
+    tinystl::sort(f, first + 1);
+    tinystl::sort(last, l);
 }
 
 template <class ForwardIt, class Compare = std::less_equal<typename iterator_traits<ForwardIt>::value_type>>

@@ -296,7 +296,7 @@ HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::insert(const value_typ
         ++dataSize_;
         updateEntryForInsert(idx);
         rehashIfNeeded();
-        return iterator(idx, bucket_, bucket_[idx].begin());
+        return find(KeyOfValue()(value));
     }
     else
     {
@@ -391,13 +391,16 @@ template <class Key, class Value, class KeyOfValue, class Hash, class KeyEqual, 
 void HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::rehash(size_type count)
 {
     bucket_type newBucket(count);
+    size_type newEntryIdx_ = count;
     for(iterator it = begin(); it != end(); ++it)
     {
         size_type idx = hash_(KeyOfValue()(*it)) % count;
         newBucket[idx].push_front(*it);
+        newEntryIdx_ = std::min(newEntryIdx_, idx);
     }
     tinystl::swap(bucket_, newBucket);
     bucketSize_ = count;
+    entryIdx_ = newEntryIdx_;
 }
 
 template <class Key, class Value, class KeyOfValue, class Hash, class KeyEqual, class Alloc>
