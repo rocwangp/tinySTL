@@ -1,4 +1,4 @@
-#include "../Profiler/profiler.h"
+#include "../profiler/profiler.h"
 #include "../priority_queue.h"
 #include "../vector.h"
 
@@ -7,7 +7,7 @@
 #include <string>
 #include <unistd.h>
 
-using namespace tinystl::Profiler;
+using namespace tinystl::profiler;
 
 
 class TestBase

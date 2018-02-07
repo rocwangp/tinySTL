@@ -499,4 +499,16 @@ ForwardIt uninitialized_fill_n(ForwardIt first, Size count, const T& value)
     }
     return first;
 }
+
+
+template <class InputIt, class ForwardIt>
+ForwardIt uninitialized_move(InputIt first, InputIt last, ForwardIt d_first)
+{
+    typedef typename iterator_traits<ForwardIt>::value_type value_type;
+    while(first != last)
+        tinystl::construct(d_first++, std::forward<value_type>(std::move(*first++)));
+    return d_first;
+}
+
+
 }

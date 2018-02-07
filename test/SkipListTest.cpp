@@ -54,11 +54,11 @@ namespace tinystl
                 auto r = rd() % 65536;
                 if(std::find(v.begin(), v.end(), r) != v.end())
                     continue;
-                v.push_back(r);
                 st.insert(r);
                 auto it = sl.insert_unique(r);
                 assert(*it == r);
                 assert(tinystl::Test::container_equal(st, sl));
+                v.push_back(r);
             }
             while(!v.empty())
             {

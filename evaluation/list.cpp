@@ -1,4 +1,4 @@
-#include "../Profiler/profiler.h"
+#include "../profiler/profiler.h"
 #include "../list.h"
 
 #include <list>
@@ -8,7 +8,7 @@
 
 #include <random>
 
-using namespace tinystl::Profiler;
+using namespace tinystl::profiler;
 
 
 class TestBase

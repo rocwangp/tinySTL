@@ -156,8 +156,8 @@ char* FreeListAlloc<inst>::start_ = 0;
 template <int inst>
 char* FreeListAlloc<inst>::finish_ = 0;
 
-/* typedef MallocAlloc<0> alloc; */
-typedef FreeListAlloc<0> alloc;
+typedef MallocAlloc<0> alloc;
+/* typedef FreeListAlloc<0> alloc; */
 
 template <class T, class Alloc>
 class SimpleAlloc {

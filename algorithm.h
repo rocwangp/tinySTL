@@ -2,6 +2,7 @@
 
 #include "iterator.h"
 #include "utility.h"
+#include "construct.h"
 #include <iostream>
 
 namespace tinystl
@@ -464,17 +465,26 @@ template <class ForwardIt, class T>
 void fill(ForwardIt first , ForwardIt last ,const T& value)
 {
     while(first != last)
-        (*first++) = value;
+        construct(&*first++, value);
+        /* (*first++) = value; */
 }
 
 template <class OutputIt, class Size, class T>
 OutputIt fill_n(OutputIt first, Size count,  const T& value)
 {
     while(count--)
-        (*first++) = value;
+        construct(first++, value);
+        /* (*first++) = std::move(value); */
     return first;
 }
 
+template <class OutputIt, class Size, class T>
+OutputIt fill_n(OutputIt first, Size count,  T&& value)
+{
+    while(count--)
+        (*first++) = std::move(value);
+    return first;
+}
 template <class ForwardIt, class Generator>
 void generate(ForwardIt first, ForwardIt last, Generator g)
 {
@@ -521,6 +531,14 @@ BidirIt2 copy_backward(BidirIt1 first, BidirIt1 last, BidirIt2 d_last)
         --d_last;
         --last;
     }
+}
+
+template <class InputIt, class OutputIt>
+OutputIt move(InputIt first, InputIt last, OutputIt d_first)
+{
+    while(first != last)
+        *(d_first++) = std::move(*(first++));
+    return d_first;
 }
 
 template <class BidirIt>

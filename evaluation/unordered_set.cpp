@@ -1,4 +1,4 @@
-#include "../Profiler/profiler.h"
+#include "../profiler/profiler.h"
 #include "../unordered_set.h"
 #include "../vector.h"
 
@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include <unistd.h>
 
-using namespace tinystl::Profiler;
+using namespace tinystl::profiler;
 
 
 class TestBase

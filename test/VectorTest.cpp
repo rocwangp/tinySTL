@@ -214,6 +214,7 @@ namespace tinystl{
 		void testCase13(){
 			stdVec<int> v1;
 			tsVec<int> v2;
+            std::cout << "in testCase13()" << std::endl;
 			for (int i = 1; i <= 10; i++) {
 				v1.push_back(i);
 				v2.push_back(i);
@@ -242,11 +243,21 @@ namespace tinystl{
 			TestItem()
 			{
 				++count;
+                data_ = count;
 			}
-			TestItem(const TestItem & other)
-			{
-				++count;
-			}
+			TestItem(const TestItem & other) = delete;
+            TestItem(TestItem&& other) noexcept
+            {
+                ++count;
+                data_ = std::move(other.data_);
+            }
+            TestItem& operator=(const TestItem& other) = delete;
+            TestItem& operator=(TestItem&& other) noexcept
+            {
+                ++count;
+                data_ = std::move(other.data_);
+                return *this;
+            }
 
 			virtual ~TestItem()
 			{
@@ -259,6 +270,7 @@ namespace tinystl{
 			}
 		private:
 			static int count;
+            int data_;
 		};
 		int TestItem::count = 0;
 
@@ -271,7 +283,7 @@ namespace tinystl{
 				t.push_back(TestItem());
 				t.push_back(TestItem());
 				t.push_back(TestItem());
-				t.insert(t.begin(), t.begin(), t.begin() + 1);
+				/* t.insert(t.begin(), t.begin(), t.begin() + 1); */
 			}
 			assert(TestItem::getCount() == 0);
 
@@ -302,6 +314,26 @@ namespace tinystl{
                 v2.pop_back();
             /* std::copy(v2.begin(), v2.end(), std::ostream_iterator<tinystl::string>(std::cout, " ")); */
         }
+        class Item
+        {
+        public:
+            Item(int cap = 10) : v_(cap) {}
+            Item(const Item& item) : v_(item.v_) { std::cout << "in copy ctor " << std::endl; }
+            Item(Item&& item) : v_(std::move(item.v_)) { std::cout << "in move ctor" << std::endl; }
+
+            Item& operator=(const Item& item) { std::cout << "in copy assign" << std::endl; v_ = item.v_; return *this; }
+            Item& operator=(Item&& item) { std::cout << "in move assign" << std::endl;  v_ = std::move(item.v_); return *this; }
+        private:
+            std::vector<int> v_;
+        };
+        void testCase18()
+        {
+            tsVec<Item> v(10);
+            Item it;
+            v.push_back(it);
+            v.push_back(std::move(it));
+            v.emplace_back(100);
+        }
 
 		void testAllCases(){
 			testCase1();
@@ -321,6 +353,7 @@ namespace tinystl{
 			testCase15();
             testCase16();
             testCase17();
+            testCase18();
 		}
 	}
 }

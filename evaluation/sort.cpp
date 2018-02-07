@@ -1,4 +1,4 @@
-#include "../Profiler/profiler.h"
+#include "../profiler/profiler.h"
 #include "../algorithm.h"
 #include <algorithm>
 #include <iostream>
@@ -7,7 +7,7 @@
 
 #include <unistd.h>
 
-using namespace tinystl::Profiler;
+using namespace tinystl::profiler;
 
 class TestBase
 {

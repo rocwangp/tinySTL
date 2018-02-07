@@ -5,7 +5,7 @@ namespace tinystl{
 	namespace UnorderedSetTest{
 	
         template <class Container>
-        void print(Container& cont)
+        void print(const Container& cont)
         {
 			std::vector<typename Container::value_type> vec1;
 			for (auto& item : cont){
@@ -46,6 +46,7 @@ namespace tinystl{
 			auto ust7 = ust3;
 			auto ust8 = ust4;
 			assert(container_equal(ust7, ust8));
+
 		}
 		void testCase2(){
 			tsUst<int> ust1(10);

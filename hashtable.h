@@ -35,8 +35,8 @@ private:
     bucket_type& bucket;
 
 public:
-    HashTableIterator(int idx, bucket_type& b)
-        : bucketIdx(idx), bucket(b)
+    HashTableIterator(int idx, const bucket_type& b)
+        : bucketIdx(idx), bucket(const_cast<bucket_type&>(b))
     {
         if(idx >= bucket.size())
         {

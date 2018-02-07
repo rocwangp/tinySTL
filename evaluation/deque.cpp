@@ -1,30 +1,34 @@
-#include "../string.h"
-#include "../Profiler/profiler.h"
+#include "../profiler/profiler.h"
+#include "../deque.h"
 
+#include <deque>
 #include <iostream>
 #include <string>
 #include <unistd.h>
 
-using namespace tinystl::Profiler;
+using namespace tinystl::profiler;
 
 class TestBase
 {
 public:
     virtual ~TestBase() {}
-    virtual void run(int count, char value) const = 0;
+    virtual void run(int count) const = 0;
 };
 
 class TestTinystl : public TestBase
 {
 public:
     virtual ~TestTinystl() {}
-    virtual void run(int count, char value) const
+    virtual void run(int count) const
     {
-        std::cout << "tinystl::string for push_back " << count << " times" << std::endl;
-        tinystl::string str;
+        std::cout << "tinystl::deque for push_front/back " << count << " times" << std::endl;
+        tinystl::deque<int> dq;
         ProfilerInstance::start();
-        for(int i = 0; i != count; ++i)
-            str.push_back(value);
+        const int max = count;
+        for(int i = 0; i != max / 2; ++i)
+            dq.push_front(i);
+        for(int i = 0; i != max; ++i)
+            dq.push_back(i);
         ProfilerInstance::finish();
         ProfilerInstance::dumpDuringTime();
     }
@@ -34,15 +38,19 @@ class TestStd : public TestBase
 {
 public:
     virtual ~TestStd() {}
-    virtual void run(int count, char value) const
+    virtual void run(int count) const
     {
-        std::cout << "std::string for push_back " << count << " times" << std::endl;
-        std::string str;
+        std::cout << "std::deque for push_front/back " << count << " times" << std::endl;
+        std::deque<int> dq;
         ProfilerInstance::start();
-        for(int i = 0; i != count; ++i)
-            str.push_back(value);
+        const int max = count;
+        for(int i = 0; i != max / 2; ++i)
+            dq.push_front(i);
+        for(int i = 0; i != max; ++i)
+            dq.push_back(i);
         ProfilerInstance::finish();
         ProfilerInstance::dumpDuringTime();
+        
     }
 };
 
@@ -74,7 +82,8 @@ int main(int argc, char** argv)
         std::cerr << "parameter error" << std::endl;
         return 1;
     }
-    testObj->run(count, 'c');
+    testObj->run(count);
     delete testObj;
     return 0;
 }
+
