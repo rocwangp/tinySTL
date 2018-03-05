@@ -35,11 +35,11 @@ public:
     map_pointer map_;
 
 
-    DequeIterator() 
-        : first_(nullptr), 
-          last_(nullptr), 
-          cur_(nullptr), 
-          map_(nullptr) 
+    DequeIterator()
+        : first_(nullptr),
+          last_(nullptr),
+          cur_(nullptr),
+          map_(nullptr)
     {}
 
     reference operator*() { return *cur_; }
@@ -94,7 +94,7 @@ public:
         if(cur_ + n >= last_)
         {
             n += (cur_ - first_);
-            size_type mapCnt = n / bufferSize(); 
+            size_type mapCnt = n / bufferSize();
             size_type pointCnt = n % bufferSize();
             setMapNode(map_ + mapCnt);
             cur_ = first_ + pointCnt;
@@ -121,7 +121,7 @@ public:
 
     difference_type operator-(const Self& it) const
     {
-        return static_cast<difference_type>(bufferSize()) * 
+        return static_cast<difference_type>(bufferSize()) *
             (map_ - it.map_ - 1) + (cur_ - first_) + (it.last_ - it.cur_);
     }
     reference operator[](difference_type pos)
@@ -135,7 +135,7 @@ public:
         last_ = first_ + bufferSize();
     }
 
-    size_type bufferSize() const 
+    size_type bufferSize() const
     {
         return BufSize == 0 ? 10 : BufSize;
     }
@@ -194,8 +194,8 @@ public:
     void assign(std::initializer_list<T> ilist)
     { tinystl::swap(deque(ilist), *this); }
 
-    reference at(size_type pos); 
-    const_reference at(size_type pos) const; 
+    reference at(size_type pos);
+    const_reference at(size_type pos) const;
 
     reference operator[](size_type pos) { return start_[static_cast<difference_type>(pos)]; }
     const_reference operator[](size_type pos) const { return start_[static_cast<difference_type>(pos)]; }
@@ -223,14 +223,14 @@ public:
     size_type size() const noexcept { return finish_ - start_; }
     size_type max_size() const noexcept { return static_cast<size_type>(-1); }
 
-    void clear() noexcept; 
+    void clear() noexcept;
 
     /* iterator insert(iterator pos, const value_type& value); */
     /* iterator insert(iterator pos, size_type count, const value_type& value); */
     /* template <class InputIterator> */
     /*     iterator insert(iterator pos, InputIterator first, InputIterator last); */
     /* iterator insert(iterator pos, std::initializer_list<T> ilist); */
-    
+
     /* iterator erase(iterator first, iterator last); */
 
     void push_back(const value_type& value);
@@ -241,7 +241,7 @@ public:
     void resize(size_type count) { resize(count, value_type()); }
     void resize(size_type count, const value_type& value);
 
-    void swap(deque& other) noexcept; 
+    void swap(deque& other) noexcept;
 private:
 
     void createMap(size_type count);
@@ -258,7 +258,7 @@ private:
     /*     iterator insertAux(iterator pos, InputIterator first, InputIterator last, std::false_type); */
 
 private:
-    size_type bufferSize() const 
+    size_type bufferSize() const
     {
         return BufSize == 0 ? 10 : BufSize;
     }
@@ -328,7 +328,7 @@ template <class T, class Alloc, size_t BufSize>
 template <class InputIterator>
 void deque<T, Alloc, BufSize>::ctorAux(InputIterator first, InputIterator last, std::false_type)
 {
-    auto count = last - first; 
+    auto count = last - first;
     createMap(count);
     for(map_pointer cur = start_.map_; cur != finish_.map_; ++cur)
     {
@@ -411,20 +411,20 @@ deque<T, Alloc, BufSize>::operator=(std::initializer_list<T> ilist)
 
 template <class T, class Alloc, size_t BufSize>
 typename deque<T, Alloc, BufSize>::reference
-deque<T, Alloc, BufSize>::at(size_type pos) 
-{ 
+deque<T, Alloc, BufSize>::at(size_type pos)
+{
     if(!(pos < size()))
         throw std::out_of_range("out of range");
-    return start_[static_cast<difference_type>(pos)]; 
+    return start_[static_cast<difference_type>(pos)];
 }
 
 template <class T, class Alloc, size_t BufSize>
 typename deque<T, Alloc, BufSize>::const_reference
-deque<T, Alloc, BufSize>::at(size_type pos) const 
-{ 
+deque<T, Alloc, BufSize>::at(size_type pos) const
+{
     if(!(pos < size()))
         throw std::out_of_range("out of range");
-    return start_[static_cast<difference_type>(pos)]; 
+    return start_[static_cast<difference_type>(pos)];
 }
 
 
@@ -432,7 +432,7 @@ deque<T, Alloc, BufSize>::at(size_type pos) const
 template <class T, class Alloc, size_t BufSize>
 void deque<T, Alloc, BufSize>::clear() noexcept
 {
-    destroy(begin(), end());
+    tinystl::destroy(begin(), end());
     finish_ = start_;
 }
 
@@ -496,7 +496,7 @@ void deque<T, Alloc, BufSize>::push_front(const value_type& value)
         reverse_map_at_front(1);
         *(start_.map_ - 1) = dataAllocator::allocate(bufferSize());
     }
-    
+
     --start_;
     construct(start_.cur_, value);
 }
@@ -572,7 +572,7 @@ template <class T, class Alloc, size_t BufSize>
 bool operator!=(const deque<T, Alloc, BufSize>& lhs,
                 const deque<T, Alloc, BufSize>& rhs)
 {
-   return !(lhs == rhs); 
+   return !(lhs == rhs);
 }
 
 }

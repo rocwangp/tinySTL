@@ -6,12 +6,13 @@
 #include "list.h"
 #include "utility.h"
 #include "algorithm.h"
+#include <cmath>
 
 
 
 namespace tinystl
 {
-    
+
 template <class T>
 class HashTableIterator
 {
@@ -76,7 +77,7 @@ public:
     {
         return *listIt;
     }
-    const_reference operator*() const 
+    const_reference operator*() const
     {
         return *listIt;
     }
@@ -121,7 +122,7 @@ public:
     }
 };
 template <class Key, class Value, class KeyOfValue,
-         class Hash = std::hash<Key>, 
+         class Hash = std::hash<Key>,
          class KeyEqual = std::equal_to<Key>,
          class Alloc = alloc>
 class HashTable
@@ -137,7 +138,7 @@ public:
     typedef const value_type&           const_reference;
     typedef value_type*                 pointer;
     typedef const value_type*           const_pointer;
-    
+
     typedef HashTableIterator<value_type>   iterator;
     typedef const iterator                  const_iterator;
 
@@ -217,7 +218,7 @@ public:
     size_type max_size() const noexcept { return static_cast<size_type>(-1); }
 
     void clear() { bucket_.clear(); }
-    
+
     iterator insert(const value_type& value);
     iterator erase(const_iterator pos);
     iterator erase(const_iterator first, const_iterator last);
@@ -227,7 +228,7 @@ public:
     const_iterator find(const key_type& key) const;
 
     size_type count(const key_type& key) const;
-    
+
     tinystl::pair<iterator, iterator> equal_range(const key_type& key);
 
     void swap(Self& other)
@@ -309,7 +310,7 @@ template <class Key, class Value, class KeyOfValue, class Hash, class KeyEqual, 
 typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::iterator
 HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::erase(const_iterator pos)
 {
-    size_type idx = pos.bucketIdx; 
+    size_type idx = pos.bucketIdx;
     if(idx < size())
     {
         auto listIt = bucket_[idx].erase(pos.listIt);
@@ -334,7 +335,7 @@ HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::erase(const key_type& 
                                 bool isSame = KeyEqual()(key, KeyOfValue()(value));
                                 if(isSame)  ++cnt;
                                 return isSame;
-                           }); 
+                           });
     dataSize_ -= cnt;
     updateEntryForErase(idx);
     return cnt;
@@ -367,7 +368,7 @@ typename HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::size_type
 HashTable<Key, Value, KeyOfValue, Hash, KeyEqual, Alloc>::count(const key_type& key) const
 {
     size_type idx = hash_(key) % bucketSize_;
-    return tinystl::count_if(bucket_[idx].begin(), bucket_[idx].end(), 
+    return tinystl::count_if(bucket_[idx].begin(), bucket_[idx].end(),
                          [&key](const value_type& value){
                             return KeyEqual()(key, KeyOfValue()(value));
                          });

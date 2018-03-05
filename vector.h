@@ -86,13 +86,13 @@ public:
     const_iterator cend() const noexcept { return static_cast<const_iterator>(finish_); }
     reverse_iterator rbegin()  noexcept { return reverse_iterator(finish_); }
     reverse_iterator rend()  noexcept { return reverse_iterator(start_); }
-    const_reverse_iterator rbegin() const noexcept 
+    const_reverse_iterator rbegin() const noexcept
     { return static_cast<const_reverse_iterator>(reverse_iterator(finish_)); }
-    const_reverse_iterator rend() const noexcept 
+    const_reverse_iterator rend() const noexcept
     { return static_cast<const_reverse_iterator>(reverse_iterator(start_)); }
-    const_reverse_iterator crbegin() const noexcept 
+    const_reverse_iterator crbegin() const noexcept
     { return static_cast<const_reverse_iterator>(reverse_iterator(finish_)); }
-    const_reverse_iterator crend() const noexcept 
+    const_reverse_iterator crend() const noexcept
     { return static_cast<const_reverse_iterator>(reverse_iterator(finish_)); }
 
     /* Capacity */
@@ -113,7 +113,7 @@ public:
     iterator insert(iterator pos, size_type count, const value_type& value);
     template <class InputIterator>
         iterator insert(iterator pos, InputIterator first, InputIterator last);
-    iterator insert(iterator pos, std::initializer_list<T> ilist); 
+    iterator insert(iterator pos, std::initializer_list<T> ilist);
 
     iterator erase(iterator pos);
     iterator erase(iterator first, iterator last);
@@ -129,7 +129,7 @@ public:
     }
 
     void resize(size_type count);
-    void resize(size_type count, const value_type& value); 
+    void resize(size_type count, const value_type& value);
 
     void swap(vector& v) noexcept;
 
@@ -237,7 +237,7 @@ vector<T, Alloc>::~vector()
 
 /* 拷贝赋值运算符 */
 template <class T, class Alloc>
-vector<T, Alloc>& 
+vector<T, Alloc>&
 vector<T, Alloc>::operator=(const vector& other)
 {
     if(&other != this)
@@ -268,7 +268,7 @@ vector<T, Alloc>::operator=(vector&& other) noexcept
 /* 移动赋值运算符 */
 template <class T, class Alloc>
 vector<T, Alloc>&
-vector<T, Alloc>::operator=(std::initializer_list<T> ilist) 
+vector<T, Alloc>::operator=(std::initializer_list<T> ilist)
 {
     vector tmp(ilist);
     tinystl::swap(tmp, *this);
@@ -353,14 +353,14 @@ void vector<T, Alloc>::shrink_to_fit()
 /* **************************************修改相关****************************************** */
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator
-vector<T, Alloc>::insert(iterator pos, const value_type& value) 
+vector<T, Alloc>::insert(iterator pos, const value_type& value)
 {
     insert(pos, 1, value);
 }
 
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator
-vector<T, Alloc>::insert(iterator pos, size_type count, const value_type& value) 
+vector<T, Alloc>::insert(iterator pos, size_type count, const value_type& value)
 {
     return insertAux(pos, count, value, std::is_integral<size_type>());
 }
@@ -379,10 +379,10 @@ template <class T, class Alloc>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& value, std::true_type)
 {
-    const size_type prevSize = tinystl::distance(begin(), pos); 
-    if(count != 0) 
+    const size_type prevSize = tinystl::distance(begin(), pos);
+    if(count != 0)
     {
-        if(static_cast<size_type>(end_ - finish_) >= count) 
+        if(static_cast<size_type>(end_ - finish_) >= count)
         {
             if(count >= end() - pos)
             {
@@ -398,7 +398,7 @@ vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& val
             }
             finish_ += count;
         }
-        else 
+        else
         {
             const size_type oldSize = size();
             const size_type newSize = oldSize + tinystl::max(oldSize, count);
@@ -406,7 +406,7 @@ vector<T, Alloc>::insertAux(iterator pos, size_type count, const value_type& val
             iterator it = tinystl::uninitialized_move(begin(), pos, start);
             it = tinystl::uninitialized_fill_n(it, count, value);
             tinystl::uninitialized_move(pos, end(), it);
-            destroy(begin(), end());
+            tinystl::destroy(begin(), end());
             dataAllocator::deallocate(start_);
             start_ = start;
             finish_ = start_ + oldSize + count;
@@ -421,8 +421,8 @@ template <class InputIterator>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::insertAux(iterator pos, InputIterator first, InputIterator last, std::false_type)
 {
-    const size_type prevSize = tinystl::distance(begin(), pos); 
-    const size_type count = last - first; 
+    const size_type prevSize = tinystl::distance(begin(), pos);
+    const size_type count = last - first;
     if(static_cast<size_type>(end_ - finish_) >= count)
     {
         if(count >= end() - pos)
@@ -456,7 +456,7 @@ vector<T, Alloc>::insertAux(iterator pos, InputIterator first, InputIterator las
 
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator
-vector<T, Alloc>::erase(iterator pos) 
+vector<T, Alloc>::erase(iterator pos)
 {
     return erase(pos, pos + 1);
 }
@@ -464,7 +464,7 @@ vector<T, Alloc>::erase(iterator pos)
 /* 删除[front, back)范围的元素 */
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator
-vector<T, Alloc>::erase(iterator first, iterator last) 
+vector<T, Alloc>::erase(iterator first, iterator last)
 {
     const auto eraseSize = last - first;
     const auto lastSize = end() - last;
@@ -495,7 +495,7 @@ void vector<T, Alloc>::push_back(value_type&& value)
         iterator newStart = dataAllocator::allocate(newSize);
         tinystl::uninitialized_move(begin(), end(), newStart);
         tinystl::destroy(start_, finish_);
-        dataAllocator::deallocate(start_); 
+        dataAllocator::deallocate(start_);
         start_ = newStart;
         finish_ = start_ + oldSize;
         end_ = start_ + newSize;
@@ -506,19 +506,19 @@ void vector<T, Alloc>::push_back(value_type&& value)
 
 
 template <class T, class Alloc>
-void vector<T, Alloc>::pop_back() 
+void vector<T, Alloc>::pop_back()
 {
     destroy(--finish_);
 }
 
 template <class T, class Alloc>
-void vector<T, Alloc>::resize(size_type count) 
+void vector<T, Alloc>::resize(size_type count)
 {
     resize(count, T());
 }
 
 template <class T, class Alloc>
-void vector<T, Alloc>::resize(size_type count, const T& value) 
+void vector<T, Alloc>::resize(size_type count, const T& value)
 {
     if(count >= size())
         insert(end(), count - size(), value);

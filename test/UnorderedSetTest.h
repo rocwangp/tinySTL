@@ -4,6 +4,7 @@
 #include "TestUtil.h"
 #include <vector>
 
+#include <random>
 #include <unordered_set>
 #include <array>
 #include <cassert>
