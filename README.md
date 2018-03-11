@@ -1,5 +1,4 @@
-# tinySTL
-
+# tinySTL 
 ## 完成进度：
 * STL基本组件
   * 内存相关
@@ -61,6 +60,10 @@
     * uninitialized_fill_n
     * construct
     * destroy
+* 扩充部分
+  * 线程池
+  * 对部分算法提供了并行支持
+  * 支持Range
 
 
 
