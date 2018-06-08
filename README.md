@@ -18,6 +18,7 @@
     * map/set，由skiplist实现
     * hashtable，哈希表，开链法解决冲突，必要时进行rehash
     * unordered_map/unordered_set，由哈希表实现
+    * tuple元组
 * STL算法
   * 不修改序列的操作
     * all_of/any_of/none_of
